@@ -1,0 +1,8 @@
+{
+  "name": "werewolf-night",
+  "version": "1.0.0",
+  "description": "เกมมนุษย์หมาป่า เล่นต่อหน้า มีไอแพดกลางเป็นผู้คุมเกม",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

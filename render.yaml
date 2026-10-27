@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: werewolf-night
+    runtime: node
+    plan: free
+    buildCommand: echo "ไม่ต้องติดตั้งแพ็กเกจเพิ่ม"
+    startCommand: node server.js
+    healthCheckPath: /healthz
