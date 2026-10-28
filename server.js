@@ -77,15 +77,14 @@ server.on('upgrade', (req, socket) => {
 const ROLE = {
   villager: { name: 'ชาวบ้าน', team: 'village' },
   wolf: { name: 'หมาป่า', team: 'wolf' },
-  seer: { name: 'หมอดู', team: 'village' },
-  doctor: { name: 'หมอ', team: 'village' },
-  hunter: { name: 'นักล่า', team: 'village' },
+  seer: { name: 'เซีย', team: 'village' },
+  hunter: { name: 'นายพราน', team: 'village' },
   witch: { name: 'แม่มด', team: 'village' },
   cupid: { name: 'คิวปิด', team: 'village' },
   bodyguard: { name: 'บอดี้การ์ด', team: 'village' },
   tanner: { name: 'คนบ้า', team: 'village' },
 };
-const SPECIALS = ['seer', 'doctor', 'hunter', 'witch', 'cupid', 'bodyguard', 'tanner'];
+const SPECIALS = ['seer', 'hunter', 'witch', 'cupid', 'bodyguard', 'tanner'];
 const MIN_PLAYERS = 4, MAX_PLAYERS = 18;
 
 const rooms = new Map();
@@ -96,7 +95,7 @@ const uid = () => crypto.randomBytes(8).toString('hex');
 
 function suggest(n) {
   const wolves = Math.max(1, Math.floor(n / 4));
-  const sp = { seer: n >= 5, doctor: n >= 6, hunter: n >= 7, witch: n >= 8, cupid: n >= 9, bodyguard: n >= 10, tanner: n >= 11 };
+  const sp = { seer: n >= 5, bodyguard: n >= 6, hunter: n >= 7, witch: n >= 8, cupid: n >= 9, tanner: n >= 11 };
   return { wolves, specials: sp };
 }
 function defaultSettings() {
@@ -109,7 +108,7 @@ function newRoom() {
   const r = {
     code, hostToken: uid(), host: null, players: [], settings: defaultSettings(),
     phase: 'lobby', night: 0, say: null, sayId: 0, sayCb: null, sayTimer: null,
-    tickFn: null, nt: null, potion: { heal: true, poison: true }, lastD: null, lastB: null,
+    tickFn: null, nt: null, potion: { heal: true, poison: true }, lastB: null,
     lovers: null, votes: {}, tally: null, hunterId: null, hunterQueue: [], winner: null,
     log: [], endsAt: 0, afterHunter: null, lynched: null, touched: Date.now(), msg: '',
   };
@@ -155,7 +154,7 @@ function startGame(r) {
   r.msg = '';
   const roles = shuffle([].concat(Array(s.wolves).fill('wolf'), spec, Array(n - s.wolves - spec.length).fill('villager')));
   r.players.forEach((p, i) => { p.role = roles[i]; p.alive = true; p.ready = false; p.lover = null; });
-  Object.assign(r, { night: 0, potion: { heal: true, poison: true }, lastD: null, lastB: null, lovers: null, votes: {}, tally: null,
+  Object.assign(r, { night: 0, potion: { heal: true, poison: true }, lastB: null, lovers: null, votes: {}, tally: null,
     winner: null, log: [], hunterQueue: [], nt: null, lynched: null });
   r.phase = 'reveal';
   say(r, 'ยินดีต้อนรับสู่เกมมนุษย์หมาป่า ทุกคนโปรดดูบทบาทของตัวเองบนโทรศัพท์ แล้วกดรับทราบ อย่าให้คนอื่นเห็นนะครับ');
@@ -167,24 +166,22 @@ const STEP_TEXT = {
   cupid: ['คิวปิดลืมตา เลือกคู่รักสองคน', 'คิวปิดหลับตา'],
   lovers: ['คู่รักลืมตา มองหน้ากันให้ดี', 'คู่รักหลับตา'],
   bodyguard: ['บอดี้การ์ดลืมตา เลือกคนที่จะปกป้องคืนนี้', 'บอดี้การ์ดหลับตา'],
-  doctor: ['หมอลืมตา เลือกคนที่จะช่วยชีวิตคืนนี้', 'หมอหลับตา'],
-  seer: ['หมอดูลืมตา เลือกคนที่ต้องการตรวจสอบ', 'หมอดูหลับตา'],
+  seer: ['เซียลืมตา เลือกคนที่ต้องการตรวจสอบ', 'เซียหลับตา'],
   wolves: ['หมาป่าลืมตา เลือกเหยื่อที่จะฆ่า', 'หมาป่าหลับตา'],
   witch: ['แม่มดลืมตา คืนนี้มีคนถูกทำร้าย แม่มดจะช่วยหรือวางยาใครไหม', 'แม่มดหลับตา'],
 };
-const STEP_ROLE = { cupid: 'cupid', bodyguard: 'bodyguard', doctor: 'doctor', seer: 'seer', witch: 'witch' };
-const STEP_LABEL = { cupid: 'คิวปิด', lovers: 'คู่รัก', bodyguard: 'บอดี้การ์ด', doctor: 'หมอ', seer: 'หมอดู', wolves: 'หมาป่า', witch: 'แม่มด' };
+const STEP_ROLE = { cupid: 'cupid', bodyguard: 'bodyguard', seer: 'seer', witch: 'witch' };
+const STEP_LABEL = { cupid: 'คิวปิด', lovers: 'คู่รัก', bodyguard: 'บอดี้การ์ด', seer: 'เซีย', wolves: 'หมาป่า', witch: 'แม่มด' };
 
 function startNight(r) {
   r.night++; r.phase = 'night'; r.votes = {}; r.tally = null; r.lynched = null;
   const steps = [];
   if (r.night === 1 && roleIn(r, 'cupid')) steps.push('cupid', 'lovers');
   if (roleIn(r, 'bodyguard')) steps.push('bodyguard');
-  if (roleIn(r, 'doctor')) steps.push('doctor');
   if (roleIn(r, 'seer')) steps.push('seer');
   steps.push('wolves');
   if (roleIn(r, 'witch')) steps.push('witch');
-  r.nt = { steps, i: -1, step: null, protB: null, protD: null, picks: {}, wolfTarget: null, witchSave: false, witchPoison: null, seerRes: null, saw: null };
+  r.nt = { steps, i: -1, step: null, protB: null, picks: {}, wolfTarget: null, witchSave: false, witchPoison: null, seerRes: null, saw: null };
   logAdd(r, '— คืนที่ ' + r.night + ' —');
   say(r, 'ค่ำคืนมาเยือนหมู่บ้าน ทุกคนหลับตา และเงียบเสียงลง', { fx: 'night', cb: () => nextStep(r) });
 }
@@ -244,14 +241,11 @@ function actNight(r, p, m) {
   } else if (k === 'bodyguard') {
     if (!valid(m.target) || m.target === p.id || m.target === r.lastB || st.done[p.id]) return;
     nt.protB = m.target; st.done[p.id] = 1; logAdd(r, 'บอดี้การ์ดปกป้อง ' + nm(r, m.target));
-  } else if (k === 'doctor') {
-    if (!valid(m.target) || m.target === r.lastD || st.done[p.id]) return;
-    nt.protD = m.target; st.done[p.id] = 1; logAdd(r, 'หมอช่วย ' + nm(r, m.target));
   } else if (k === 'seer') {
     if (m.ack) { if (nt.seerRes) st.done[p.id] = 1; return; }
     if (!valid(m.target) || m.target === p.id || nt.seerRes) return;
     const t = byId(r, m.target); nt.seerRes = { id: t.id, wolf: t.role === 'wolf' };
-    logAdd(r, 'หมอดูตรวจ ' + t.name + (t.role === 'wolf' ? ' (เป็นหมาป่า)' : ' (ไม่ใช่หมาป่า)'));
+    logAdd(r, 'เซียตรวจ ' + t.name + (t.role === 'wolf' ? ' (เป็นหมาป่า)' : ' (ไม่ใช่หมาป่า)'));
   } else if (k === 'wolves') {
     if (!valid(m.target) || byId(r, m.target).role === 'wolf') return;
     nt.picks[p.id] = m.target;
@@ -280,15 +274,13 @@ function killPlayers(r, ids) {
 function roleSuffix(r, p) { return r.settings.revealOnDeath ? ' ซึ่งเป็น' + ROLE[p.role].name : ''; }
 
 function dawn(r) {
-  const nt = r.nt; let victim = nt.wolfTarget, sacrificed = null;
-  r.lastD = nt.protD; r.lastB = nt.protB;
+  const nt = r.nt; let victim = nt.wolfTarget;
+  r.lastB = nt.protB;
   if (victim) {
-    if (nt.witchSave || nt.protD === victim) victim = null;
-    else if (nt.protB === victim) { sacrificed = nt.protB; victim = null; }
+    if (nt.witchSave || nt.protB === victim) victim = null;
   }
   const kills = [];
   if (victim) kills.push(victim);
-  if (sacrificed) { const bg = alive(r).find(p => p.role === 'bodyguard'); if (bg) kills.push(bg.id); }
   if (nt.witchPoison) kills.push(nt.witchPoison);
   const dead = killPlayers(r, [...new Set(kills)]);
   r.phase = 'dawn'; r.nt = null;
@@ -314,8 +306,8 @@ function processHunters(r, next) {
     const id = r.hunterQueue.shift(), h = byId(r, id);
     if (!h || alive(r).length < 2) continue;
     r.phase = 'hunter'; r.hunterId = id; r.endsAt = Date.now() + F * 30000;
-    say(r, 'นักล่า ' + h.name + ' ถูกกำจัดแล้ว แต่ก่อนสิ้นลม นักล่าเลือกยิงใครสักหนึ่งคนได้', { fx: 'shot', cb: () => {
-      setTick(r, () => { if (Date.now() > r.endsAt) { setTick(r, null); r.endsAt = 0; say(r, 'นักล่าตัดสินใจไม่ยิงใคร', { cb: () => processHunters(r, next) }); } });
+    say(r, 'นายพราน ' + h.name + ' ถูกกำจัดแล้ว แต่ก่อนสิ้นลม นายพรานเลือกยิงใครสักหนึ่งคนได้', { fx: 'shot', cb: () => {
+      setTick(r, () => { if (Date.now() > r.endsAt) { setTick(r, null); r.endsAt = 0; say(r, 'นายพรานตัดสินใจไม่ยิงใคร', { cb: () => processHunters(r, next) }); } });
     } });
     return;
   }
@@ -325,8 +317,8 @@ function shoot(r, p, target) {
   if (r.phase !== 'hunter' || r.hunterId !== p.id) return;
   const t = byId(r, target); if (!t || !t.alive) return;
   setTick(r, null); r.endsAt = 0;
-  const dead = killPlayers(r, [t.id]); logAdd(r, 'นักล่ายิง ' + t.name);
-  say(r, 'นักล่ายิง ' + dead.map(d => d.name + roleSuffix(r, d)).join(' และ '), { fx: 'shot', cb: () => processHunters(r, r.hunterNext || (() => {})) });
+  const dead = killPlayers(r, [t.id]); logAdd(r, 'นายพรานยิง ' + t.name);
+  say(r, 'นายพรานยิง ' + dead.map(d => d.name + roleSuffix(r, d)).join(' และ '), { fx: 'shot', cb: () => processHunters(r, r.hunterNext || (() => {})) });
 }
 
 /* ───────────── กลางวัน ───────────── */
@@ -426,7 +418,6 @@ function playerView(r, p) {
     const k = st.key, done = !!st.done[p.id];
     if (k === 'cupid') v.act = { kind: 'cupid', done, options: opts(() => true) };
     else if (k === 'bodyguard') v.act = { kind: 'bodyguard', done, options: opts(x => x.id !== p.id && x.id !== r.lastB && !(done)), last: r.lastB ? nm(r, r.lastB) : null };
-    else if (k === 'doctor') v.act = { kind: 'doctor', done, options: opts(x => x.id !== r.lastD), last: r.lastD ? nm(r, r.lastD) : null };
     else if (k === 'seer') v.act = { kind: 'seer', done, options: opts(x => x.id !== p.id), result: nt.seerRes ? { name: nm(r, nt.seerRes.id), wolf: nt.seerRes.wolf } : null };
     else if (k === 'wolves') v.act = { kind: 'wolves', done, options: opts(x => x.role !== 'wolf'), picks: Object.fromEntries(Object.entries(nt.picks).filter(([id]) => byId(r, id) && byId(r, id).alive)), mates: r.players.filter(x => x.role === 'wolf' && x.alive).map(x => ({ id: x.id, name: x.name })) };
     else if (k === 'witch') v.act = { kind: 'witch', done, victim: nt.wolfTarget ? { id: nt.wolfTarget, name: nm(r, nt.wolfTarget) } : null, potion: r.potion, options: opts(x => x.id !== p.id) };
