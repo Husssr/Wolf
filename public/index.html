@@ -372,6 +372,31 @@ input[type=range]{accent-color:var(--gold2)}
 @keyframes tgrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .skiprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:min(640px,92vw);padding:8px 14px;border-radius:99px;border:2px dashed #7f9a9a;color:#cfe2e0;background:rgba(188,214,226,.07);font-size:.95rem}
 .skiprow svg.ic{width:1.2em;height:1.2em}
+
+/* ===== รอบปรับปรุง 4: ปุ่มทุกแบบให้สวยและสอดคล้องกัน / ปุ่มยืนยันไม่ขยับ ===== */
+.btn.small.ghost{gap:.45em;color:#e9dcb8;border:1px solid rgba(201,153,63,.55);border-radius:12px;
+  background:linear-gradient(180deg,rgba(74,54,35,.55),rgba(20,13,7,.8));box-shadow:inset 0 1px 0 rgba(255,225,150,.28),inset 0 -2px 0 rgba(0,0,0,.4),0 3px 0 #0c0704,0 6px 12px rgba(0,0,0,.35);text-shadow:0 1px 0 #000}
+.btn.small.ghost:hover{filter:brightness(1.18);box-shadow:inset 0 1px 0 rgba(255,225,150,.4),inset 0 -2px 0 rgba(0,0,0,.4),0 3px 0 #0c0704,0 0 16px rgba(227,189,98,.25)}
+.btn.small.ghost:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,225,150,.2),0 1px 0 #0c0704}
+.btn.small.ghost svg.ic{width:1.15em;height:1.15em}
+.btn.ghost.block{border:1px solid rgba(201,153,63,.55);background:linear-gradient(180deg,rgba(74,54,35,.4),rgba(20,13,7,.75));box-shadow:inset 0 1px 0 rgba(255,225,150,.25),0 3px 0 #0c0704;color:#e9dcb8}
+.btn.ghost.block:active{transform:translateY(2px);box-shadow:0 1px 0 #0c0704}
+.btn.small:not(.ghost){background:linear-gradient(180deg,#6a4c2e,#2a1d12)}
+.btn.tt{display:inline-grid;position:relative}
+.btn.tt>span{grid-area:1/1;display:inline-flex;align-items:center;justify-content:center;gap:.45em;white-space:nowrap;transition:opacity .15s}
+.btn.tt .c{opacity:0;visibility:hidden}
+.btn.tt.ask .a{opacity:0;visibility:hidden}
+.btn.tt.ask .c{opacity:1;visibility:visible}
+.btn.tt.ask{color:#ffe8dc;border-color:#ff9a7c;background:linear-gradient(180deg,#b9502f,#6a2212);animation:askpulse 1s ease-in-out infinite}
+.btn.tt.danger:not(.ask){color:#ffc9b8;border-color:rgba(224,97,63,.6)}
+@keyframes askpulse{0%,100%{box-shadow:inset 0 1px 0 rgba(255,200,170,.4),0 3px 0 #2a0d06,0 0 8px rgba(224,97,63,.35)}50%{box-shadow:inset 0 1px 0 rgba(255,200,170,.4),0 3px 0 #2a0d06,0 0 22px rgba(224,97,63,.8)}}
+.pl .x{width:30px;height:30px;padding:0;display:grid;place-items:center;border-radius:50%;border:1px solid #6a4f22;background:linear-gradient(180deg,#34261a,#1f160e);color:#d9c58f;font-size:.9rem;line-height:1;transition:.15s}
+.pl .x:hover{background:linear-gradient(180deg,#d1613f,#7e2a18);border-color:#ff9a7c;color:#fff}
+.pl .x:active{transform:scale(.9)}
+.step button{border-radius:12px;font-weight:700}
+.seg button{position:relative;overflow:hidden}
+.btn:focus-visible,.seg button:focus-visible,.step button:focus-visible,.tog:focus-visible{outline:2px solid var(--gold1);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.btn.tt.ask{animation:none}}
 </style>
 </head>
 <body>
@@ -457,6 +482,11 @@ const ICON = {
   cupid:'<path d="M12 20.5s-8-4.9-8-10.7a4.4 4.4 0 0 1 8-2.4 4.4 4.4 0 0 1 8 2.4c0 5.8-8 10.7-8 10.7z"/><path d="M3 21 21.5 2.5M21.5 2.5H16M21.5 2.5V8"/><path d="M3 21l-.6-3.2M3 21l3.2.6"/>',
   bodyguard:'<path d="M12 2.8l8 2.9v6.3c0 5-3.4 8.2-8 9.2-4.6-1-8-4.2-8-9.2V5.7z"/><path d="M12 7v9M8.2 11h7.6"/>',
   tanner:'<path d="M3 16 5 6.5l4.5 5L12 4l2.5 7.5 4.5-5L21 16z"/><path d="M3 16h18v3.2H3z"/><circle cx="5" cy="5.4" r=".9"/><circle cx="12" cy="3" r=".9"/><circle cx="19" cy="5.4" r=".9"/>',
+  sound:'<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/>',
+  mute:'<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+  home:'<path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+  stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  trash:'<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/><path d="M10 11v5M14 11v5"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
   moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
@@ -829,19 +859,21 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 /* ───────── ผู้คุมเกม (ไอแพด) ───────── */
 const WIN = { village: 'ชาวบ้านชนะ', wolves: 'หมาป่าชนะ', lovers: 'คู่รักชนะ', tanner: 'คนบ้าชนะ' };
+/* ปุ่มกดสองครั้งยืนยัน: ซ้อนข้อความทั้งสองแบบไว้ในช่องเดียวกัน ขนาดปุ่มจึงคงที่ ไม่ขยับเมื่อเปลี่ยนเป็นข้อความยืนยัน */
+const ttBtn = (id, icon, label, ask, extra = '') => `<button class="btn small ghost tt ${extra}" id="${id}"><span class="a">${ic(icon)} ${label}</span><span class="c">${ic('check')} ${ask || 'กดอีกครั้งเพื่อยืนยัน'}</span></button>`;
 function topbar() {
   return `<div class="top"><div class="row"><span class="chip">${ic('moon')} ห้อง ${esc(V.code)}</span><span class="chip">${V.players.filter(p => p.alive).length}/${V.players.length} คนยังอยู่</span></div>
-    <div class="row"><button class="btn small ghost" id="snd">${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? '<button class="btn small ghost" id="cls">ปิดเกม</button>' : ''}<button class="btn small ghost" id="home">หน้าหลัก</button><button class="btn small ghost" id="dis">ยุบห้อง</button></div></div>`;
+    <div class="row"><button class="btn small ghost" id="snd">${ic(soundOn ? 'sound' : 'mute')} ${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? ttBtn('cls', 'stop', 'ปิดเกม', '') : ''}${ttBtn('home', 'home', 'หน้าหลัก', 'กดอีกครั้งเพื่อออกไปหน้าหลัก')}${ttBtn('dis', 'trash', 'ยุบห้อง', 'กดอีกครั้งเพื่อยุบห้อง', 'danger')}</div></div>`;
 }
 function bindTop() {
   const s = document.getElementById('snd'); if (s) s.onclick = () => { soundOn = !soundOn; if (!soundOn && window.speechSynthesis) speechSynthesis.cancel(); renderHost(); };
-  const c = document.getElementById('cls'); if (c) c.onclick = () => { if (c.dataset.s) { send({ t: 'closeGame' }); } else { c.dataset.s = 1; c.textContent = 'กดอีกครั้งเพื่อยืนยัน'; setTimeout(() => { c.dataset.s = ''; c.textContent = 'ปิดเกม'; }, 3000); } };
-  twoTap('home', 'หน้าหลัก', 'กดอีกครั้งเพื่อออกไปหน้าหลัก', goHome);
-  twoTap('dis', 'ยุบห้อง', 'กดอีกครั้งเพื่อยุบห้อง', () => send({ t: 'disband' }));
+  twoTap('cls', '', '', () => send({ t: 'closeGame' }));
+  twoTap('home', '', '', goHome);
+  twoTap('dis', '', '', () => send({ t: 'disband' }));
 }
 function twoTap(id, label, ask, fn) {
   const b = document.getElementById(id); if (!b) return;
-  b.onclick = () => { if (b.dataset.s) return fn(); b.dataset.s = 1; b.textContent = ask; setTimeout(() => { if (b.isConnected) { b.dataset.s = ''; b.textContent = label; } }, 3000); };
+  b.onclick = () => { if (b.dataset.s) return fn(); b.dataset.s = 1; b.classList.add('ask'); setTimeout(() => { if (b.isConnected) { b.dataset.s = ''; b.classList.remove('ask'); } }, 3000); };
 }
 function goHome() { dealStop(); if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } V = null; renderLanding(); }
 function renderHost() {
