@@ -139,32 +139,148 @@ svg.ic{width:1.4em;height:1.4em;flex:none;fill:none;stroke:currentColor;stroke-w
 .fade{animation:fade .35s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.fade,.pulse:after{animation:none}}
+
+/* ===== รอบปรับปรุง: ปุ่มป้ายไม้ลายนูนทอง / ตอบสนองทุกจอ / การ์ดบทบาท ===== */
+:root{--gold1:#f6dc94;--gold2:#d4a444;--gold3:#8a6a2c;--wood1:#4a3623;--wood2:#2a1d12}
+[hidden]{display:none!important}
+body{font-size:clamp(16px,.45vw + 14px,20px);min-height:100vh}
+@supports (height:100dvh){body{min-height:100dvh}.stage{min-height:calc(100dvh - 36px)}.phone{min-height:calc(100dvh - 20px)}}
+.card{border-color:rgba(201,153,63,.32);box-shadow:inset 0 1px 0 rgba(255,225,150,.08),0 10px 30px rgba(0,0,0,.35)}
+.btn,.opt,.seg button,.step button,.tog,.pt.pick{-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.btn,.opt,.seg button,.step button,.tog{position:relative;overflow:hidden}
+.btn{padding:0 32px;color:var(--gold1);border:1px solid var(--gold3);border-radius:12px;
+  background:repeating-linear-gradient(94deg,rgba(255,255,255,.04) 0 2px,transparent 2px 8px),linear-gradient(180deg,var(--wood1),var(--wood2));
+  box-shadow:inset 0 1px 0 rgba(255,225,150,.4),inset 0 -2px 0 rgba(0,0,0,.5),0 0 0 2px #140d07,0 4px 0 #0c0704,0 8px 16px rgba(0,0,0,.45);
+  text-shadow:0 1px 0 #000;letter-spacing:.02em;transition:transform .09s,box-shadow .09s,filter .15s}
+.btn:hover{filter:brightness(1.12)}
+.btn:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,225,150,.3),inset 0 -1px 0 rgba(0,0,0,.5),0 0 0 2px #140d07,0 1px 0 #0c0704,0 3px 8px rgba(0,0,0,.4)}
+.btn::before,.btn::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 35% 30%,#fbe9b0,#b4862f 55%,#4a3410);box-shadow:0 1px 1px rgba(0,0,0,.7)}
+.btn::before{left:12px}.btn::after{right:12px}
+.btn.small{padding:0 24px}.btn.small::before{left:9px}.btn.small::after{right:9px}
+.btn.primary{color:#2a1a06;text-shadow:0 1px 0 rgba(255,240,190,.55);border-color:#fbe9b0;
+  background:linear-gradient(180deg,var(--gold1),var(--gold2) 58%,#a8782a);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(90,55,10,.5),0 0 0 2px #3a2810,0 4px 0 #1a1005,0 8px 18px rgba(227,189,98,.28)}
+.btn.primary:active{box-shadow:inset 0 2px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(90,55,10,.5),0 0 0 2px #3a2810,0 1px 0 #1a1005,0 3px 10px rgba(227,189,98,.25)}
+.btn.primary::before,.btn.primary::after{background:radial-gradient(circle at 35% 30%,#fff3cf,#9a6e22 60%,#4a3410)}
+.btn.ember{color:#ffe8dc;border-color:#ff9a7c;text-shadow:0 1px 0 #3a0f06;background:linear-gradient(180deg,#d1613f,#7e2a18);
+  box-shadow:inset 0 1px 0 rgba(255,200,170,.5),inset 0 -3px 0 rgba(60,10,0,.5),0 0 0 2px #2a0d06,0 4px 0 #1a0803,0 8px 18px rgba(224,97,63,.25)}
+.btn.ghost{padding:0 22px;color:var(--bone);text-shadow:none;border-color:transparent;background:rgba(9,17,21,.55);box-shadow:inset 0 0 0 1px rgba(201,153,63,.4)}
+.btn.ghost::before,.btn.ghost::after{display:none}
+.btn.ghost:active{transform:scale(.97);box-shadow:inset 0 0 0 1px rgba(201,153,63,.4)}
+.btn[disabled]{opacity:.45;filter:saturate(.4);pointer-events:none}
+.opt{color:var(--bone);border:1px solid #6a4f22;border-radius:12px;
+  background:repeating-linear-gradient(94deg,rgba(255,255,255,.035) 0 2px,transparent 2px 8px),linear-gradient(180deg,#34261a,#1f160e);
+  box-shadow:inset 0 1px 0 rgba(255,225,150,.25),inset 0 -2px 0 rgba(0,0,0,.45),0 3px 0 #0c0704;transition:transform .09s,box-shadow .09s,filter .15s}
+.opt:hover{filter:brightness(1.12)}
+.opt:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,225,150,.2),0 1px 0 #0c0704}
+.opt.sel{color:#2a1a06;border-color:#fbe9b0;background:linear-gradient(180deg,var(--gold1),var(--gold2) 60%,#a8782a);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(90,55,10,.45),0 3px 0 #1a1005,0 0 20px rgba(227,189,98,.3)}
+.opt.bad.sel{color:#1a0b06;border-color:#ffb7a3;background:linear-gradient(180deg,#f08a6a,#c04526);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(80,20,5,.45),0 3px 0 #2a0d06,0 0 20px rgba(224,97,63,.35)}
+.seg{border-color:var(--gold3);background:rgba(20,13,7,.7);box-shadow:inset 0 2px 4px rgba(0,0,0,.5)}
+.seg button{color:#b9a572;transition:filter .15s}
+.seg button.on{color:#2a1a06;background:linear-gradient(180deg,var(--gold1),var(--gold2) 60%,#a8782a);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 0 rgba(90,55,10,.4)}
+.seg button:active{filter:brightness(1.25)}
+.step button{color:var(--gold1);border-color:var(--gold3);background:linear-gradient(180deg,var(--wood1),var(--wood2));box-shadow:inset 0 1px 0 rgba(255,225,150,.35),0 3px 0 #0c0704;transition:transform .09s,box-shadow .09s}
+.step button:active{transform:translateY(2px);box-shadow:0 1px 0 #0c0704}
+.tog{border-color:#4a3a22;background:linear-gradient(180deg,rgba(42,29,18,.7),rgba(20,13,7,.7));transition:transform .09s,border-color .15s,background .15s}
+.tog:active{transform:scale(.985)}
+.tog.on{border-color:var(--gold2);background:linear-gradient(180deg,rgba(133,184,144,.14),rgba(20,13,7,.7));box-shadow:0 0 18px rgba(227,189,98,.12)}
+.pt.pick{transition:transform .09s,border-color .15s}
+.pt.pick:hover{border-color:var(--gold2)}
+.pt.pick:active{transform:scale(.96)}
+.rip{position:fixed;z-index:60;width:130px;height:130px;pointer-events:none;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,236,170,.55) 0,rgba(255,236,170,.18) 45%,transparent 70%);border:1.5px solid rgba(246,220,148,.7);
+  transform:translate(-50%,-50%) scale(.1);animation:rip .6s ease-out forwards}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+/* การ์ดบทบาท */
+.pcard{--w:min(24vw,96px);width:var(--w);aspect-ratio:200/280;position:relative;perspective:900px;cursor:pointer;touch-action:none;flex:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;outline-offset:5px;-webkit-tap-highlight-color:transparent}
+.pcard .in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.pcard.show .in{transform:rotateY(180deg)}
+.pcard .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:7%/5%;overflow:hidden;
+  box-shadow:0 8px 22px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.6)}
+.pcard .front{transform:rotateY(180deg)}
+.pcard .front,.pk-card{container-type:inline-size}
+.cs{display:block;width:100%;height:100%}
+.cname{position:absolute;left:12%;right:12%;top:76.4%;height:12.9%;display:grid;place-items:center;text-align:center}
+.cname b{font-family:var(--display);font-weight:400;font-size:18px;font-size:clamp(9px,10.5cqw,40px);color:#f3dc9a;text-shadow:0 1px 0 #000;white-space:nowrap;letter-spacing:.02em}
+.csub{position:absolute;left:0;right:0;top:89.4%;text-align:center;font-size:9px;font-size:clamp(6px,5cqw,16px);color:#c9b57e;letter-spacing:.06em}
+.csub.wolf{color:#ffb7a3}
+#dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;max-width:560px;margin:0 auto;
+  padding:34px max(16px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,transparent,rgba(9,17,21,.94) 46%);pointer-events:none}
+#dock .pcard{pointer-events:auto}
+.dockbig #dock .pcard{--w:min(40vw,150px)}
+.dhint{color:var(--mute);font-size:.92rem;padding-bottom:8px;max-width:16ch}
+body.hasdock .phone{padding-bottom:152px}
+body.hasdock.dockbig .phone{padding-bottom:262px}
+body.sleepy #dock{background:linear-gradient(180deg,transparent,#000 46%);opacity:.5}
+#peek{position:fixed;inset:0;z-index:40;display:grid;place-content:center;justify-items:center;gap:16px;padding:20px;text-align:center;
+  background:rgba(3,8,11,.86);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);pointer-events:none;animation:fade .2s both}
+#peek .pk-card{position:relative;width:min(66vw,260px,calc((100dvh - 200px) * .714));aspect-ratio:200/280;border-radius:7%/5%;overflow:hidden;
+  box-shadow:0 0 70px rgba(227,189,98,.35),0 14px 40px rgba(0,0,0,.7);animation:flipin .38s cubic-bezier(.2,.8,.2,1) both}
+@keyframes flipin{from{transform:perspective(800px) rotateY(90deg) scale(.9)}to{transform:none}}
+#peek .pk-info{max-width:34ch;display:grid;gap:8px;justify-items:center}
+.pkname{font-family:var(--display);font-size:1.6rem;color:#f3dc9a}
+.pkteam{font-size:.85rem;color:var(--mute);letter-spacing:.06em}.pkteam.wolf{color:#ffb7a3}
+#peek p{margin:0;color:var(--bone)}
+.revealtip{text-align:center;display:grid;gap:10px;padding-top:6px}
+
+/* ปรับตามขนาดหน้าจอ */
+@media(min-width:1500px){.wrap{max-width:1500px}}
+@media(min-width:700px){.phone{max-width:560px}}
+@media(max-width:520px){
+  .qr{width:120px;height:120px}.code{letter-spacing:.08em}.top{flex-wrap:wrap}
+  .tallyrow{grid-template-columns:minmax(60px,110px) 1fr auto}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .wrap,.narrow{padding-block:8px}.pulse{width:90px;height:90px}.pulse svg{width:40px;height:40px}.big{font-size:clamp(1.4rem,4vw,2.2rem)}.timer{font-size:clamp(3rem,12vh,5rem)}
+  .center{gap:10px}.phone{padding-block:8px}.moon{width:56px;height:56px;margin-bottom:10px}
+  #dock .pcard{--w:62px}.dockbig #dock .pcard{--w:80px}.dhint{display:none}
+  body.hasdock .phone,body.hasdock.dockbig .phone{padding-bottom:110px}
+  #peek{grid-auto-flow:column;gap:24px}#peek .pk-card{width:min(30vw,calc((100dvh - 40px) * .714))}
+}
+@media(prefers-reduced-motion:reduce){.rip{display:none}.pcard .in{transition:none}#peek .pk-card{animation:none}}
+input[type=range]{accent-color:var(--gold2)}
+.qr{padding:6px;background:#fff}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="cbg" cx=".5" cy=".35" r=".85"><stop offset="0" stop-color="#1f3b49"/><stop offset="1" stop-color="#0a151b"/></radialGradient>
+  <radialGradient id="cbgW" cx=".5" cy=".35" r=".85"><stop offset="0" stop-color="#4a2018"/><stop offset="1" stop-color="#120706"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc94"/><stop offset=".5" stop-color="#c9993f"/><stop offset="1" stop-color="#f1d58a"/></linearGradient>
+  <linearGradient id="goldW" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd0bd"/><stop offset=".5" stop-color="#e0613f"/><stop offset="1" stop-color="#ffb7a3"/></linearGradient>
+  <radialGradient id="ball" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#6b7fc9"/><stop offset=".55" stop-color="#2a2f66"/><stop offset="1" stop-color="#12142e"/></radialGradient>
+  <pattern id="lat" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M9 1L17 9L9 17L1 9Z" fill="none" stroke="#c9993f" stroke-opacity=".32" stroke-width="1"/></pattern>
+</defs></svg>
+<div id="dock" hidden><div class="dhint">กดค้างที่การ์ด<br>เพื่อดูบทบาทของคุณ</div>
+  <div class="pcard" id="pcard" role="button" tabindex="0" aria-label="การ์ดบทบาทของคุณ กดค้างเพื่อดู"><div class="in"><div class="face back"></div><div class="face front"></div></div></div></div>
+<div id="peek" hidden><div class="pk-card"></div><div class="pk-info"></div></div>
 <svg class="forest" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true"><path fill="#0d1a20" d="M0 90V60l20-30 20 30-8 0 22-34 22 34-8 0 20-26 20 26h-8l24-38 24 38h-10l22-30 22 30h-8l20-34 20 34H300l24-40 24 40h-9l22-28 22 28h-8l20-36 20 36h-10l24-32 24 32h-8l22-38 22 38H560l22-30 22 30h-8l20-34 20 34h-10l24-40 24 40h-8l22-30 22 30h-10l20-36 20 36h-8l24-32 24 32H850l22-34 22 34h-8l22-38 22 38h-9l20-30 20 30h-10l24-34 24 34h-8l22-30 22 30h-10l20-36 20 36h-8l24-32 24 32V90z"/></svg>
 <script>
 (() => {
 'use strict';
 /* ───────── ข้อมูลบทบาท ───────── */
 const ROLES = {
-  villager:{n:'ชาวบ้าน',d:'ไม่มีพลังพิเศษ ใช้การสังเกตและการโหวตเพื่อหาหมาป่า',s:'ไม่มีพลังพิเศษ'},
-  wolf:{n:'หมาป่า',d:'ทุกคืนตื่นมาเลือกฆ่าชาวบ้านร่วมกับพวก ชนะเมื่อหมาป่ามีจำนวนเท่ากับหรือมากกว่าคนที่เหลือ',s:'ฆ่าชาวบ้านทุกคืน'},
-  seer:{n:'หมอดู',d:'ทุกคืนเลือกตรวจ 1 คน เพื่อรู้ว่าเป็นหมาป่าหรือไม่',s:'ตรวจหมาป่าทุกคืน'},
-  doctor:{n:'หมอ',d:'ทุกคืนเลือกช่วย 1 คนจากการถูกหมาป่าฆ่า ช่วยคนเดิมติดกันสองคืนไม่ได้ ช่วยตัวเองได้',s:'ช่วยชีวิต 1 คนต่อคืน'},
-  hunter:{n:'นักล่า',d:'เมื่อตาย ไม่ว่าด้วยสาเหตุใด ยิงคนอื่นให้ตายตามได้ 1 คน',s:'ตายแล้วยิงตามได้'},
-  witch:{n:'แม่มด',d:'มียาชุบชีวิต 1 ขวด และยาพิษ 1 ขวด ใช้ได้อย่างละครั้งตลอดเกม',s:'ยาช่วย 1 ยาพิษ 1'},
-  cupid:{n:'คิวปิด',d:'คืนแรกเลือกคู่รัก 2 คน ถ้าคนหนึ่งตาย อีกคนตายตาม ถ้าคู่รักอยู่คนละฝ่ายและเหลือกันสองคน คู่รักชนะ',s:'จับคู่รักคืนแรก'},
-  bodyguard:{n:'บอดี้การ์ด',d:'ทุกคืนปกป้อง 1 คน ถ้าคนนั้นถูกหมาป่าโจมตี บอดี้การ์ดจะตายแทน ปกป้องคนเดิมติดกันไม่ได้',s:'ตายแทนคนที่ปกป้อง'},
-  tanner:{n:'คนบ้า',d:'ชนะคนเดียวถ้าถูกชาวบ้านโหวตออกจากหมู่บ้าน ดังนั้นต้องทำตัวให้น่าสงสัย',s:'อยากถูกโหวตออก'},
+  villager:{n:'ชาวบ้าน',t:'ฝ่ายชาวบ้าน',d:'ไม่มีพลังพิเศษ ใช้การสังเกตและการโหวตเพื่อหาหมาป่า',s:'ไม่มีพลังพิเศษ'},
+  wolf:{n:'หมาป่า',t:'ฝ่ายหมาป่า',d:'ทุกคืนตื่นมาเลือกฆ่าชาวบ้านร่วมกับพวก ชนะเมื่อหมาป่ามีจำนวนเท่ากับหรือมากกว่าคนที่เหลือ',s:'ฆ่าชาวบ้านทุกคืน'},
+  seer:{n:'เซีย',t:'ฝ่ายชาวบ้าน',d:'ทุกคืนเลือกตรวจ 1 คน เพื่อรู้ว่าเป็นหมาป่าหรือไม่',s:'ตรวจหมาป่าทุกคืน'},
+  hunter:{n:'นายพราน',t:'ฝ่ายชาวบ้าน',d:'เมื่อตาย ไม่ว่าด้วยสาเหตุใด ยิงคนอื่นให้ตายตามได้ 1 คน',s:'ตายแล้วยิงตามได้'},
+  witch:{n:'แม่มด',t:'ฝ่ายชาวบ้าน',d:'มียาชุบชีวิต 1 ขวด และยาพิษ 1 ขวด ใช้ได้อย่างละครั้งตลอดเกม',s:'ยาช่วย 1 ยาพิษ 1'},
+  cupid:{n:'คิวปิด',t:'ฝ่ายชาวบ้าน',d:'คืนแรกเลือกคู่รัก 2 คน ถ้าคนหนึ่งตาย อีกคนตายตาม ถ้าคู่รักอยู่คนละฝ่ายและเหลือกันสองคน คู่รักชนะ',s:'จับคู่รักคืนแรก'},
+  bodyguard:{n:'บอดี้การ์ด',t:'ฝ่ายชาวบ้าน',d:'ทุกคืนเลือกปกป้องคนอื่น 1 คน ถ้าคนนั้นถูกหมาป่าโจมตีจะรอด ปกป้องตัวเองไม่ได้ และปกป้องคนเดิมติดกันสองคืนไม่ได้',s:'ปกป้องคนอื่นคืนละ 1 คน'},
+  tanner:{n:'คนบ้า',t:'ฝ่ายอิสระ',d:'ชนะคนเดียวถ้าถูกชาวบ้านโหวตออกจากหมู่บ้าน ดังนั้นต้องทำตัวให้น่าสงสัย',s:'อยากถูกโหวตออก'},
 };
-const SPECIALS = ['seer','doctor','hunter','witch','cupid','bodyguard','tanner'];
+const SPECIALS = ['seer','hunter','witch','cupid','bodyguard','tanner'];
 const ICON = {
   villager:'<path d="M4 12 12 5l8 7v8H4z"/><path d="M10 20v-5h4v5"/>',
   wolf:'<path d="M5 4l4 4h6l4-4v9c0 4-3 7-7 7s-7-3-7-7z"/><path d="M9 13h.01M15 13h.01M10.5 17l1.5 1 1.5-1"/>',
   seer:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-  doctor:'<path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/>',
   hunter:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
   witch:'<path d="M9 3h6M10 3v5l-5 10a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-10V3"/><path d="M8 15h8"/>',
   cupid:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>',
@@ -175,8 +291,108 @@ const ICON = {
   vote:'<path d="M5 11l7-7 7 7M5 20h14M12 4v12"/>',
 };
 const ic = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
+
+/* ───────── การ์ดบทบาท: ภาพวาดเวกเตอร์ ลายเส้นทองบนพื้นมืด ───────── */
+const G = '#e3bd62', BONE = '#ece6d3', DK = '#17252b';
+const star = (x, y, s) => `<path d="M${x} ${y-s}l${s*.3} ${s*.7} ${s*.7} ${s*.3} -${s*.7} ${s*.3} -${s*.3} ${s*.7} -${s*.3} -${s*.7} -${s*.7} -${s*.3} ${s*.7} -${s*.3}z" fill="${G}"/>`;
+const ART = {
+  wolf: `<circle cx="100" cy="112" r="58" fill="rgba(188,214,226,.10)" stroke="#bcd6e2" stroke-opacity=".4"/>
+    <path d="M56 62L80 90Q100 83 120 90L144 62L148 118Q146 158 100 192Q54 158 52 118Z" fill="${DK}" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M63 78L77 93L64 108Z M137 78L123 93L136 108Z" fill="#3a2a22" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M70 122Q83 113 96 126Q82 131 70 122Z M130 122Q117 113 104 126Q118 131 130 122Z" fill="#e0613f" stroke="#ffb7a3"/>
+    <path d="M82 120v8M118 120v8" stroke="#1a0b06" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M66 111L92 118M134 111L108 118" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M90 150H110L100 162Z" fill="${G}"/>
+    <path d="M100 162V172M100 172Q88 182 76 172M100 172Q112 182 124 172" fill="none" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M86 175L90 189L95 177Z M114 175L110 189L105 177Z" fill="${BONE}" stroke="#10202a"/>
+    <path d="M58 138L72 142M56 150L72 152M142 138L128 142M144 150L128 152" stroke="${G}" stroke-width="1.6" stroke-linecap="round"/>
+    ${star(44,50,5)}${star(158,52,4)}`,
+  villager: `<circle cx="140" cy="62" r="12" fill="#bcd6e2" opacity=".9"/>
+    <path d="M40 190H160" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M118 104V84H132V114" fill="${DK}" stroke="${G}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M126 80Q120 72 126 66Q132 60 126 52" fill="none" stroke="${BONE}" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+    <path d="M46 128L100 82L154 128Z" fill="#3a2418" stroke="${G}" stroke-width="2.6" stroke-linejoin="round"/>
+    <rect x="60" y="128" width="80" height="62" fill="${DK}" stroke="${G}" stroke-width="2.6"/>
+    <path d="M88 190V158Q100 144 112 158V190Z" fill="#3a2a1c" stroke="${G}" stroke-width="2"/>
+    <rect x="66" y="138" width="16" height="16" fill="#f3d27a" stroke="${G}" stroke-width="1.6"/><path d="M74 138V154M66 146H82" stroke="${G}"/>
+    <rect x="118" y="138" width="16" height="16" fill="#f3d27a" stroke="${G}" stroke-width="1.6"/><path d="M126 138V154M118 146H134" stroke="${G}"/>
+    <path d="M38 190L48 160L58 190Z M146 190L156 164L166 190Z" fill="${DK}" stroke="${G}" stroke-opacity=".8"/>
+    ${star(44,60,5)}${star(84,48,3)}`,
+  seer: `<path d="M100 38V52M52 58L62 68M148 58L138 68M34 112H48M152 112H166" stroke="${G}" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="100" cy="112" r="46" fill="url(#ball)" stroke="${G}" stroke-width="2.6"/>
+    <path d="M66 112Q100 82 134 112Q100 142 66 112Z" fill="#0b161b" stroke="#bcd6e2" stroke-width="2"/>
+    <circle cx="100" cy="112" r="15" fill="#bcd6e2"/><circle cx="100" cy="112" r="6.5" fill="#0b161b"/><circle cx="95" cy="107" r="3" fill="#fff"/>
+    <path d="M72 86Q82 72 98 68" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64 166Q100 192 136 166L148 192H52Z" fill="#3a2418" stroke="${G}" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M44 198H156" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    ${star(40,80,6)}${star(160,150,5)}${star(150,52,3)}${star(48,150,3)}`,
+  hunter: `<circle cx="138" cy="60" r="10" fill="#bcd6e2" opacity=".85"/>
+    <path d="M36 192L54 150L72 192Z M126 192L146 140L166 192Z M92 192L104 166L116 192Z" fill="#14262c" stroke="${G}" stroke-opacity=".75" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M70 52Q150 119 70 186" fill="none" stroke="${G}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M70 52L94 119L70 186" fill="none" stroke="${BONE}" stroke-width="1.4"/>
+    <rect x="104" y="111" width="7" height="16" rx="2" fill="#7a4a24" stroke="${G}"/>
+    <path d="M94 119H170" stroke="${G}" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M172 119L158 111V127Z" fill="${G}"/>
+    <path d="M94 119L85 112M94 119L85 126M103 119L94 112M103 119L94 126" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    ${star(46,62,4)}${star(160,92,3)}`,
+  witch: `<path d="M148 54a15 15 0 1 0 8 24a12 12 0 1 1 -8 -24z" fill="#bcd6e2" opacity=".9"/>
+    <ellipse cx="100" cy="148" rx="60" ry="13" fill="${DK}" stroke="${G}" stroke-width="2.6"/>
+    <path d="M68 144Q86 100 94 72Q102 52 122 44Q112 62 114 80Q126 108 134 144Z" fill="#1f1a2e" stroke="${G}" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M71 130Q100 140 131 130L133 143Q100 153 69 143Z" fill="#6a3f8f" stroke="${G}" stroke-width="1.8"/>
+    <rect x="93" y="132" width="13" height="14" rx="1" fill="none" stroke="${G}" stroke-width="2.2"/>
+    <path d="M50 170H58V178Q68 184 68 192Q68 200 54 200Q40 200 40 192Q40 184 50 178Z" fill="#3c9b6a" stroke="${G}" stroke-width="2" stroke-linejoin="round"/><rect x="49" y="165" width="10" height="6" fill="#7a4a24" stroke="${G}"/>
+    <path d="M138 170H146V178Q156 184 156 192Q156 200 142 200Q128 200 128 192Q128 184 138 178Z" fill="#8a45b8" stroke="${G}" stroke-width="2" stroke-linejoin="round"/><rect x="137" y="165" width="10" height="6" fill="#7a4a24" stroke="${G}"/>
+    ${star(46,62,5)}${star(84,52,3)}`,
+  cupid: `<path d="M82 104Q40 72 30 50Q30 80 44 96Q34 92 30 94Q40 114 60 120Q48 120 46 126Q64 136 84 130Z" fill="rgba(236,230,211,.12)" stroke="${G}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M118 104Q160 72 170 50Q170 80 156 96Q166 92 170 94Q160 114 140 120Q152 120 154 126Q136 136 116 130Z" fill="rgba(236,230,211,.12)" stroke="${G}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M100 178C50 142 54 92 84 92C94 92 100 100 100 106C100 100 106 92 116 92C146 92 150 142 100 178Z" fill="#b8324f" stroke="${G}" stroke-width="2.8" stroke-linejoin="round"/>
+    <path d="M70 110Q74 101 84 100" fill="none" stroke="#ffd6df" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M54 166L150 72" stroke="${G}" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M156 66L150 80L141.8 71.4Z" fill="${G}" stroke="${G}" stroke-linejoin="round"/>
+    <path d="M54 166L44 165M54 166L55 176M62 158L52 157M62 158L63 168" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    ${star(44,54,4)}${star(160,150,5)}${star(100,60,3)}`,
+  bodyguard: `<path d="M44 150Q34 112 48 78M156 150Q166 112 152 78" fill="none" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M42 130l-8-3M40 114l-9-1M42 98l-8 3M158 130l8-3M160 114l9-1M158 98l8 3" stroke="${G}" stroke-width="2" stroke-linecap="round"/>
+    <path d="M100 46L150 64V116Q150 160 100 192Q50 160 50 116V64Z" fill="${DK}" stroke="${G}" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M100 57L141 71V116Q141 152 100 179Q59 152 59 116V71Z" fill="none" stroke="${G}" stroke-opacity=".6" stroke-width="1.6"/>
+    <circle cx="100" cy="102" r="14" fill="${G}"/>
+    <path d="M72 152Q72 122 100 122Q128 122 128 152Q114 165 100 168Q86 165 72 152Z" fill="${G}"/>
+    <path d="M100 38V30M92 34H108" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/>`,
+  tanner: `<circle cx="100" cy="152" r="38" fill="${BONE}" stroke="${G}" stroke-width="2.6"/>
+    <path d="M78 148Q86 138 94 148M106 148Q114 138 122 148" fill="none" stroke="#10202a" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="80" cy="162" r="5" fill="#e58aa8" opacity=".6"/><circle cx="120" cy="162" r="5" fill="#e58aa8" opacity=".6"/>
+    <path d="M76 164Q100 192 124 164Q100 172 76 164Z" fill="#7a1f2e" stroke="#10202a" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M60 118Q38 80 50 50Q64 74 84 96Q92 60 100 46Q108 60 116 96Q136 74 150 50Q162 80 140 118Z" fill="#7a2a3a" stroke="${G}" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M100 46Q92 60 84 96Q100 102 116 96Q108 60 100 46Z" fill="#2c5a4a" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="50" cy="50" r="5.5" fill="${G}"/><circle cx="100" cy="46" r="5.5" fill="${G}"/><circle cx="150" cy="50" r="5.5" fill="${G}"/>
+    <path d="M58 112Q100 128 142 112L140 124Q100 140 60 124Z" fill="${G}" stroke="#7a5a1f"/>`,
+};
+function frame(w) {
+  const g = w ? 'url(#goldW)' : 'url(#gold)', bg = w ? 'url(#cbgW)' : 'url(#cbg)';
+  return `<rect x="3" y="3" width="194" height="274" rx="14" fill="${bg}" stroke="${g}" stroke-width="3"/>
+  <rect x="10" y="10" width="180" height="260" rx="9" fill="none" stroke="${g}" stroke-width="1" opacity=".75"/>
+  <path d="M20 16l4 4-4 4-4-4zM180 16l4 4-4 4-4-4zM20 256l4 4-4 4-4-4zM180 256l4 4-4 4-4-4z" fill="${g}"/>
+  <rect x="26" y="32" width="148" height="172" rx="8" fill="rgba(4,10,13,.45)" stroke="${g}" stroke-width="1.4"/>
+  <path d="M30 214H170L180 232 170 250H30L20 232Z" fill="#0b161b" stroke="${g}" stroke-width="1.8"/>`;
+}
+function cardFace(role) {
+  const w = role === 'wolf', r = ROLES[role] || ROLES.villager;
+  return `<svg class="cs" viewBox="0 0 200 280" aria-hidden="true">${frame(w)}${ART[role] || ''}</svg><div class="cname"><b>${r.n}</b></div><div class="csub ${w ? 'wolf' : ''}">${r.t}</div>`;
+}
+const BACK = `<svg class="cs" viewBox="0 0 200 280" aria-hidden="true"><rect x="3" y="3" width="194" height="274" rx="14" fill="#0c1a21" stroke="url(#gold)" stroke-width="3"/>
+  <rect x="12" y="12" width="176" height="256" rx="8" fill="url(#lat)" stroke="url(#gold)" stroke-width="1"/>
+  <circle cx="100" cy="140" r="54" fill="#0c1a21" stroke="url(#gold)" stroke-width="2.2"/>
+  <circle cx="100" cy="140" r="45" fill="none" stroke="url(#gold)" stroke-width="1" stroke-dasharray="2 4"/>
+  <path d="M114 110a32 32 0 1 0 0 60a26 26 0 1 1 0 -60z" fill="url(#gold)"/>
+  <path d="M20 16l4 4-4 4-4-4zM180 16l4 4-4 4-4-4zM20 256l4 4-4 4-4-4zM180 256l4 4-4 4-4-4z" fill="url(#gold)"/>
+  ${star(66,100,5)}${star(138,176,4)}${star(70,184,3)}</svg>`;
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $app = document.getElementById('app');
+document.addEventListener('pointerdown', e => {
+  const t = e.target.closest && e.target.closest('.btn,.opt,.tog,.seg button,.step button,.pt.pick'); if (!t || t.disabled) return;
+  const s = document.createElement('span'); s.className = 'rip'; s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px';
+  document.body.appendChild(s); setTimeout(() => s.remove(), 650);
+}, { passive: true });
 const LS = { get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}} };
 
 /* ───────── เครือข่าย ───────── */
@@ -206,7 +422,7 @@ function toast(t) { const d = document.createElement('div'); d.className = 'toas
 const now = () => Date.now() + offset;
 
 /* ───────── เสียง ───────── */
-let AC = null, voices = [], voiceName = LS.get('ww_voice') || '', rate = LS.get('ww_rate') || 0.95, soundOn = true;
+let AC = null, voices = [], soundOn = true;
 function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
 function tone(f1, f2, dur, type = 'sine', vol = .12, delay = 0) {
   const a = ac(); if (!a || !soundOn) return; const t = a.currentTime + delay;
@@ -225,18 +441,34 @@ const FX = {
   shot(){ tone(900, 60, .35, 'sawtooth', .18); },
   dead(){ tone(220, 90, 1.1, 'triangle', .14); },
 };
-function loadVoices() { voices = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^th/i.test(v.lang)); }
+let VS = Object.assign({ gender: 'male', rate: 0.92, pitch: 0, voice: '' }, LS.get('ww_vs') || {});
+const saveVS = () => LS.set('ww_vs', VS);
+function loadVoices() { voices = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^th/i.test(String(v.lang).replace('_', '-'))); }
 if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = () => { loadVoices(); }; }
+const RE_M = /niwat|male|ชาย|krit|\bm\b/i;
+const kind = v => RE_M.test(v.name) ? 'male' : 'female';
+function pickVoice() {
+  let v = voices.find(x => x.name === VS.voice);
+  if (!v) v = voices.find(x => kind(x) === VS.gender);
+  const native = !!v && kind(v) === VS.gender;
+  if (!v) v = voices[0];
+  const base = native ? 1 : (VS.gender === 'male' ? 0.62 : 1.12);
+  return { voice: v, native, pitch: Math.min(2, Math.max(0.1, base + VS.pitch)) };
+}
 function speak(text, done) {
   let finished = false; const fin = () => { if (!finished) { finished = true; done && done(); } };
-  const est = Math.min(16000, 1400 + text.length * 110);
+  const est = Math.min(20000, 1400 + text.length * 115);
   if (!soundOn || !window.speechSynthesis || !voices.length) return setTimeout(fin, est * .8);
+  const parts = [];
+  text.split(/\s+/).forEach(w => { if (!w) return; const l = parts[parts.length - 1]; if (l && l.length < 16) parts[parts.length - 1] = l + ' ' + w; else parts.push(w); });
   try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; u.rate = rate; u.pitch = .92;
-    const v = voices.find(x => x.name === voiceName) || voices[0]; if (v) u.voice = v;
-    u.onend = fin; u.onerror = fin; speechSynthesis.speak(u);
-    setTimeout(fin, est + 8000);
+    speechSynthesis.cancel(); const pv = pickVoice(); let i = 0;
+    const next = () => {
+      if (finished) return; if (i >= parts.length) return fin();
+      const u = new SpeechSynthesisUtterance(parts[i++]); u.lang = 'th-TH'; u.rate = VS.rate; u.pitch = pv.pitch; u.volume = 1; if (pv.voice) u.voice = pv.voice;
+      u.onend = () => setTimeout(next, 170); u.onerror = () => setTimeout(next, 170); speechSynthesis.speak(u);
+    };
+    next(); setTimeout(fin, est + parts.length * 400 + 8000);
   } catch (e) { setTimeout(fin, est); }
 }
 let lastSay = 0;
@@ -261,11 +493,11 @@ function setSel(k) { if (k !== selKey) { selKey = k; sel = []; } }
 
 /* ───────── หน้าแรก ───────── */
 function renderLanding() {
-  mode = null; closed = true; try { ws && ws.close(); } catch (e) {}
+  hideDock(); mode = null; closed = true; try { ws && ws.close(); } catch (e) {}
   const c = new URLSearchParams(location.search).get('c') || '';
   const h = LS.get('ww_host'), p = LS.get('ww_player');
   $app.innerHTML = `<div class="narrow hero fade">
-    <div class="moon"></div><h1>ค่ำคืนหมาป่า</h1><p>เกมมนุษย์หมาป่าที่เล่นต่อหน้ากัน<br>ไอแพดกลางเป็นผู้คุมเกม โทรศัพท์ของทุกคนเป็นบัตรบทบาทลับ</p>
+    <div class="moon"></div><h1>ค่ำคืนหมาป่า</h1><p>เกมมนุษย์หมาป่าที่เล่นต่อหน้ากัน<br>เครื่องผู้คุมเกมเป็นผู้บรรยาย โทรศัพท์ของทุกคนเป็นการ์ดบทบาทลับ</p>
     <div class="card stack" style="text-align:left">
       <div class="lbl">เข้าร่วมเกมของเพื่อน</div>
       <input id="jc" class="field" inputmode="numeric" maxlength="4" placeholder="รหัสห้อง 4 หลัก" value="${esc(c)}">
@@ -275,7 +507,7 @@ function renderLanding() {
     </div>
     <div class="divider">หรือ</div>
     <div class="stack">
-      <button class="btn block" id="hb">สร้างห้องใหม่ (ใช้ไอแพดเป็นผู้คุมเกม)</button>
+      <button class="btn block" id="hb">สร้างห้อง</button>
       ${h ? `<button class="btn ghost block" id="hr">กลับไปห้องผู้คุมเกม ${esc(h.code)}</button>` : ''}
     </div>
     ${errMsg ? `<p class="err">${esc(errMsg)}</p>` : ''}
@@ -294,7 +526,7 @@ function renderLanding() {
 
 function onState() {
   if (V.who !== mode) return;
-  if (mode === 'host') { narrate(); renderHost(); } else { renderPlayer(); }
+  if (mode === 'host') { narrate(); renderHost(); } else { renderPlayer(); updateDock(); }
   keepAwake();
 }
 let wl = null;
@@ -344,10 +576,13 @@ function hostLobby() {
       <div><div class="t" style="font-weight:600;margin-bottom:6px">เวลาอภิปราย</div><div class="seg" id="ds">${[[60, '1 นาที'], [120, '2 นาที'], [180, '3 นาที'], [300, '5 นาที']].map(([v, l]) => `<button data-v="${v}" class="${s.discussSec === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
       <div><div class="t" style="font-weight:600;margin-bottom:6px">เวลาตัดสินใจตอนกลางคืน</div><div class="seg" id="as">${[[30, '30 วิ'], [45, '45 วิ'], [60, '60 วิ']].map(([v, l]) => `<button data-v="${v}" class="${s.actionSec === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
     </div>
-    <div class="card stack"><div class="row" style="justify-content:space-between"><div class="lbl">เสียงบรรยาย</div><button class="btn small ghost" id="vtog">${ui.voice ? 'ซ่อน' : 'ตั้งค่า'}</button></div>
-      <div class="row"><button class="btn small" id="vtest">ทดสอบเสียงพูด</button><span class="muted" id="vinfo">${voices.length ? 'พบเสียงภาษาไทย ' + voices.length + ' เสียง' : 'ยังไม่พบเสียงภาษาไทยในเครื่องนี้ จะแสดงข้อความแทนเสียง'}</span></div>
-      ${ui.voice ? `<div class="stack" style="gap:10px">${voices.length > 1 ? `<select id="vsel" class="field">${voices.map(v => `<option ${v.name === (voiceName || voices[0].name) ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select>` : ''}
-        <label class="muted">ความเร็วพูด <input id="vrate" type="range" min="0.7" max="1.25" step="0.05" value="${rate}" style="width:100%"></label></div>` : ''}
+    <div class="card stack"><div class="lbl">เสียงบรรยาย</div>
+      <div class="seg" id="vg"><button data-v="male" class="${VS.gender === 'male' ? 'on' : ''}">เสียงผู้ชาย</button><button data-v="female" class="${VS.gender === 'female' ? 'on' : ''}">เสียงผู้หญิง</button></div>
+      ${voices.length > 1 ? `<select id="vsel" class="field"><option value="">เลือกเสียงให้อัตโนมัติ</option>${voices.map(v => `<option value="${esc(v.name)}" ${v.name === VS.voice ? 'selected' : ''}>${esc(v.name)} (${kind(v) === 'male' ? 'ชาย' : 'หญิง'})</option>`).join('')}</select>` : ''}
+      <label class="muted">ระดับเสียง ทุ้ม ↔ แหลม<input id="vpitch" type="range" min="-0.4" max="0.4" step="0.05" value="${VS.pitch}" style="width:100%"></label>
+      <label class="muted">ความเร็วพูด ช้า ↔ เร็ว<input id="vrate" type="range" min="0.7" max="1.25" step="0.05" value="${VS.rate}" style="width:100%"></label>
+      <div class="row"><button class="btn small" id="vtest">ทดสอบเสียงพูด</button></div>
+      <span class="muted" style="font-size:.9rem">${voices.length ? 'พบเสียงภาษาไทยในเครื่องนี้ ' + voices.length + ' เสียง' + (pickVoice().native ? '' : ' เครื่องนี้ไม่มีเสียงตรงกับเพศที่เลือก ระบบปรับโทนเสียงให้แทน') : 'ยังไม่พบเสียงภาษาไทยในเครื่องนี้ จะแสดงข้อความตัวใหญ่แทนเสียง'}</span>
     </div>
     ${V.msg ? `<p class="err" style="margin:0">${esc(V.msg)}</p>` : ''}
     <button class="btn primary block" id="go" style="min-height:64px;font-size:1.2rem" ${n < V.min ? 'disabled' : ''}>${n < V.min ? 'ต้องมีผู้เล่นอย่างน้อย ' + V.min + ' คน' : 'เริ่มเกม'}</button>
@@ -363,18 +598,61 @@ function hostLobby() {
   $app.querySelectorAll('#ds button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { discussSec: +b.dataset.v } }));
   $app.querySelectorAll('#as button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { actionSec: +b.dataset.v } }));
   document.getElementById('go').onclick = () => { ac(); if (window.speechSynthesis) { try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) {} } send({ t: 'start' }); };
-  document.getElementById('vtog').onclick = () => { ui.voice = !ui.voice; hostLobby(); };
-  document.getElementById('vtest').onclick = () => { ac(); loadVoices(); FX.howl(); speak('ทดสอบเสียง หมาป่าลืมตา เลือกเหยื่อที่จะฆ่า'); };
-  const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { voiceName = vs.value; LS.set('ww_voice', voiceName); };
-  const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { rate = +vr.value; LS.set('ww_rate', rate); };
+  $app.querySelectorAll('#vg button').forEach(b => b.onclick = () => { VS.gender = b.dataset.v; VS.voice = ''; saveVS(); hostLobby(); });
+  const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { VS.voice = vs.value; saveVS(); hostLobby(); };
+  const vp = document.getElementById('vpitch'); if (vp) vp.oninput = () => { VS.pitch = +vp.value; saveVS(); };
+  const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { VS.rate = +vr.value; saveVS(); };
+  document.getElementById('vtest').onclick = () => { ac(); loadVoices(); FX.howl(); speak('ทดสอบเสียง หมาป่าลืมตา เลือกเหยื่อที่จะฆ่า หมาป่าได้เลือกฆ่าแล้ว หมาป่าหลับตา'); };
 }
-let qrLib = null;
+/* ───────── ตัวสร้าง QR Code ในตัว (ไม่ต้องพึ่งเว็บภายนอก) ───────── */
+function makeQR(text) {
+  const data = Array.from(new TextEncoder().encode(text));
+  const ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], BLK = [0, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5];
+  const raw = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; };
+  let ver = 1; for (; ver <= 10; ver++) { const cap = Math.floor(raw(ver) / 8) - ECC[ver] * BLK[ver]; if (4 + (ver < 10 ? 8 : 16) + data.length * 8 <= cap * 8) break; }
+  if (ver > 10) return '';
+  const bits = []; const put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >>> i) & 1); };
+  put(4, 4); put(data.length, 8); data.forEach(b => put(b, 8));
+  const cap = (Math.floor(raw(ver) / 8) - ECC[ver] * BLK[ver]) * 8;
+  put(0, Math.min(4, cap - bits.length)); while (bits.length % 8) bits.push(0);
+  for (let p = 0xEC; bits.length < cap; p ^= 0xEC ^ 0x11) put(p, 8);
+  const cw = []; for (let i = 0; i < bits.length; i += 8) cw.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+  // Reed-Solomon
+  const EXP = [], LOG = []; for (let i = 0, x = 1; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 256) x ^= 0x11D; }
+  const mul = (a, b) => a && b ? EXP[(LOG[a] + LOG[b]) % 255] : 0;
+  const gen = d => { let g = [1]; for (let i = 0; i < d; i++) { const n = new Array(g.length + 1).fill(0); g.forEach((c, j) => { n[j] ^= c; n[j + 1] ^= mul(c, EXP[i]); }); g = n; } return g; };
+  const rs = (d, n) => { const g = gen(n), r = new Array(n).fill(0); d.forEach(b => { const f = b ^ r.shift(); r.push(0); g.slice(1).forEach((c, i) => { r[i] ^= mul(c, f); }); }); return r; };
+  const nb = BLK[ver], ec = ECC[ver], rawCw = Math.floor(raw(ver) / 8), shortN = nb - rawCw % nb, shortLen = Math.floor(rawCw / nb);
+  const blocks = []; for (let i = 0, k = 0; i < nb; i++) { const len = shortLen - ec + (i < shortN ? 0 : 1); const d = cw.slice(k, k + len); k += len; blocks.push({ d, e: rs(d, ec) }); }
+  const all = []; for (let i = 0; i <= shortLen - ec; i++) blocks.forEach(b => { if (i < b.d.length) all.push(b.d[i]); }); for (let i = 0; i < ec; i++) blocks.forEach(b => all.push(b.e[i]));
+  // matrix
+  const N = ver * 4 + 17, M = [], F = []; for (let i = 0; i < N; i++) { M.push(new Array(N).fill(false)); F.push(new Array(N).fill(false)); }
+  const set = (x, y, v) => { M[y][x] = v; F[y][x] = true; };
+  for (let i = 0; i < N; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  [[3, 3], [N - 4, 3], [3, N - 4]].forEach(([cx, cy]) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const x = cx + dx, y = cy + dy; if (x >= 0 && x < N && y >= 0 && y < N) set(x, y, Math.max(Math.abs(dx), Math.abs(dy)) !== 2 && Math.max(Math.abs(dx), Math.abs(dy)) !== 4); } });
+  if (ver > 1) { const na = Math.floor(ver / 7) + 2, step = Math.ceil((ver * 4 + 4) / (na * 2 - 2)) * 2, pos = [6]; for (let p = N - 7; pos.length < na; p -= step) pos.splice(1, 0, p);
+    pos.forEach((cx, i) => pos.forEach((cy, j) => { if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) return; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(cx + dx, cy + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); })); }
+  const fmt = mask => { const d = mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537); const b = ((d << 10) | r) ^ 0x5412, g = i => ((b >>> i) & 1) === 1;
+    for (let i = 0; i <= 5; i++) set(8, i, g(i)); set(8, 7, g(6)); set(8, 8, g(7)); set(7, 8, g(8)); for (let i = 9; i < 15; i++) set(14 - i, 8, g(i));
+    for (let i = 0; i < 8; i++) set(N - 1 - i, 8, g(i)); for (let i = 8; i < 15; i++) set(8, N - 15 + i, g(i)); set(8, N - 8, true); };
+  fmt(0);
+  if (ver >= 7) { let r = ver; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25); const b = (ver << 12) | r; for (let i = 0; i < 18; i++) { const c = ((b >>> i) & 1) === 1, a = N - 11 + i % 3, d = Math.floor(i / 3); set(a, d, c); set(d, a, c); } }
+  let bi = 0; for (let right = N - 1; right >= 1; right -= 2) { if (right === 6) right = 5; for (let v = 0; v < N; v++) for (let j = 0; j < 2; j++) { const x = right - j, up = ((right + 1) & 2) === 0, y = up ? N - 1 - v : v; if (!F[y][x] && bi < all.length * 8) { M[y][x] = ((all[bi >>> 3] >>> (7 - (bi & 7))) & 1) === 1; bi++; } } }
+  const cond = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x, y) => x % 3 === 0, (x, y) => (x + y) % 3 === 0, (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0,
+    (x, y) => x * y % 2 + x * y % 3 === 0, (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  const applyMask = m => { for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!F[y][x] && cond[m](x, y)) M[y][x] = !M[y][x]; };
+  const penalty = () => { let s = 0, dark = 0;
+    for (let t = 0; t < 2; t++) for (let a = 0; a < N; a++) { let run = 1; for (let b = 1; b < N; b++) { const p = t ? M[b - 1][a] : M[a][b - 1], c = t ? M[b][a] : M[a][b]; if (p === c) { run++; if (run === 5) s += 3; else if (run > 5) s++; } else run = 1; } }
+    for (let y = 0; y < N - 1; y++) for (let x = 0; x < N - 1; x++) { const c = M[y][x]; if (c === M[y][x + 1] && c === M[y + 1][x] && c === M[y + 1][x + 1]) s += 3; }
+    M.forEach(r => r.forEach(c => { if (c) dark++; })); s += Math.floor(Math.abs(dark * 20 - N * N * 10) / (N * N)) * 10; return s; };
+  let best = 0, bs = 1e9; for (let m = 0; m < 8; m++) { applyMask(m); fmt(m); const p = penalty(); if (p < bs) { bs = p; best = m; } applyMask(m); }
+  applyMask(best); fmt(best);
+  const q = 3; let d = ''; for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (M[y][x]) d += `M${x + q} ${y + q}h1v1h-1z`;
+  const T = N + q * 2; return `<svg viewBox="0 0 ${T} ${T}" shape-rendering="crispEdges" role="img" aria-label="QR Code เข้าห้อง"><rect width="${T}" height="${T}" fill="#fff"/><path d="${d}" fill="#111"/></svg>`;
+}
 function drawQR(url) {
   const box = document.getElementById('qr'); if (!box) return;
-  const make = () => { try { const q = window.qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { box.textContent = V.code; } };
-  if (window.qrcode) return make();
-  if (!qrLib) { qrLib = new Promise(res => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = res; s.onerror = res; document.head.appendChild(s); }); }
-  qrLib.then(() => { if (window.qrcode) make(); else box.textContent = 'QR'; });
+  try { box.innerHTML = makeQR(url) || V.code; } catch (e) { box.textContent = V.code; }
 }
 function stageHtml(inner, cls = '') { return `<div class="wrap"><div class="stage ${cls}">${topbar()}<div class="center fade">${inner}</div><div>${pgrid(false)}</div></div></div>`; }
 function hostReveal() {
@@ -430,31 +708,18 @@ function hostEnd() {
 }
 
 /* ───────── ผู้เล่น (มือถือ) ───────── */
-let peek = false, lastActKey = '';
-function myRoleCard(hidden) {
-  const r = V.me.role; if (!r) return '';
-  if (hidden) return `<div class="rolecard hidden"><div style="font-size:1.2rem;font-weight:600">กดค้างเพื่อดูบทบาท</div><div>ปล่อยนิ้วเพื่อซ่อน</div></div>`;
-  const extra = [];
-  if (V.me.mates && V.me.mates.length) extra.push(`<div class="chip wolf">พวกหมาป่า: ${V.me.mates.map(m => esc(m.name)).join(', ')}</div>`);
-  if (V.me.lover) extra.push(`<div class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} คู่รักของคุณคือ ${esc(V.me.lover)}</div>`);
-  return `<div class="rolecard ${r === 'wolf' ? 'wolf' : ''}">${ic(r)}<h2>${esc(ROLES[r].n)}</h2><div style="max-width:30ch">${esc(ROLES[r].d)}</div>${extra.join('')}</div>`;
-}
-function bindHold(id, fn) {
-  const b = document.getElementById(id); if (!b) return;
-  const on = e => { e.preventDefault(); peek = true; fn(); }, off = () => { if (peek) { peek = false; fn(); } };
-  b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off); b.addEventListener('contextmenu', e => e.preventDefault());
-}
+let lastActKey = '';
 function renderPlayer() {
   const me = V.me, ph = V.phase, a = V.act;
   const key = ph + '|' + (a ? a.kind : '') + '|' + V.night + '|' + (V.hunterId || '');
-  if (key !== lastActKey) { lastActKey = key; if (a && navigator.vibrate && ['night', 'hunter'].includes(ph)) navigator.vibrate([250, 120, 250]); setSel(key); }
+  if (key !== lastActKey) { lastActKey = key; if (a && navigator.vibrate && ['night', 'hunter', 'vote'].includes(ph)) navigator.vibrate(ph === 'vote' ? [140] : [250, 120, 250]); setSel(key); }
   const head = `<div class="row" style="justify-content:space-between"><span class="chip">${ic(me.alive ? 'moon' : 'villager')} ${esc(me.name)}</span><span class="chip">ห้อง ${esc(V.code)}</span></div>`;
   let body = '', foot = '', cls = '';
   if (ph === 'lobby') {
     body = `<div class="center"><h2 class="big" style="font-size:2rem">เข้าห้องแล้ว</h2><p class="sub">รอผู้คุมเกมกดเริ่ม คุณจะได้เห็นบทบาททางโทรศัพท์เครื่องนี้</p></div><div class="plist">${V.players.map(p => `<div class="pl"><span class="dot ${p.conn ? '' : 'off'}"></span><span class="n">${esc(p.name)}</span></div>`).join('')}</div>`;
     foot = `<button class="btn ghost block" id="lv">ออกจากห้อง</button>`;
   } else if (ph === 'reveal') {
-    body = `<div class="stack"><div class="lbl" style="text-align:center">บทบาทของคุณ</div><div id="rc">${myRoleCard(!peek)}</div></div>`;
+    body = `<div class="revealtip"><div class="lbl">การ์ดบทบาทของคุณ</div><h2 style="font-size:1.8rem">กดค้างที่การ์ดมุมขวาล่าง</h2><p class="sub" style="margin:0 auto">ปล่อยนิ้วเพื่อซ่อน อย่าให้คนอื่นเห็นบทบาทของคุณ</p></div>`;
     foot = `<button class="btn primary block" id="rdy" ${me.ready ? 'disabled' : ''}>${me.ready ? 'รับทราบแล้ว รอคนอื่น' : 'รับทราบ'}</button>`;
   } else if (ph === 'ended') {
     const w = V.winner, mine = me.role === 'wolf' ? 'wolves' : (me.role === 'tanner' ? 'tanner' : 'village');
@@ -481,16 +746,17 @@ function renderPlayer() {
     foot = `<p class="caption">โหวตแล้ว ${a.count} จาก ${a.total} คน</p>`;
   } else {
     const say = V.say ? V.say.text : '';
-    const title = { dawn: 'รุ่งสาง', discuss: 'อภิปราย', vote: 'โหวต', point: 'ชี้ตัว', voteResult: 'ผลโหวต', lynch: 'ผลโหวต', hunter: 'นักล่า', night: 'กลางคืน' }[ph] || '';
+    const title = { dawn: 'รุ่งสาง', discuss: 'อภิปราย', vote: 'โหวต', point: 'ชี้ตัว', voteResult: 'ผลโหวต', lynch: 'ผลโหวต', hunter: 'นายพราน', night: 'กลางคืน' }[ph] || '';
     let extra = '';
     if (ph === 'point') extra = `<div class="verdict w">นับสาม แล้วชี้พร้อมกัน</div>`;
     if (ph === 'voteResult' && V.tally) { const t = V.tally, nm = id => (V.players.find(p => p.id === id) || {}).name; extra = `<div class="stack">${Object.keys(t.counts).sort((x, y) => t.counts[y] - t.counts[x]).map(id => `<div class="pt"><span class="n">${esc(nm(id))}</span><b>${t.counts[id]}</b></div>`).join('')}</div>`; }
     body = `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.7rem">${title}</h2>${V.endsAt && ph === 'discuss' ? `<span class="chip" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span>` : ''}</div>
       ${extra}<div class="pgrid" style="grid-template-columns:1fr 1fr">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span>${p.role && !p.alive ? `<span class="r">${esc(ROLES[p.role].n)}</span>` : ''}</div>`).join('')}</div></div>`;
-    foot = `<div class="stack" style="gap:10px"><p class="caption">${esc(say)}</p><button class="btn ghost block" id="pk">กดค้างเพื่อดูบทบาทของคุณ</button><div id="rc">${peek ? myRoleCard(false) : ''}</div></div>`;
+    foot = `<p class="caption">${esc(say)}</p>`;
   }
   $app.innerHTML = `<div class="phone ${cls}" ${cls ? 'style="background:#000"' : ''}>${cls ? '<div></div>' : head}<div class="fade">${body}</div><div>${foot}</div></div>`;
   if (cls) document.body.style.background = '#000'; else document.body.style.background = '';
+  document.body.classList.toggle('sleepy', !!cls);
   bindPlayer(a);
 }
 function opts(list, max, bad) {
@@ -500,8 +766,7 @@ function actUI(a) {
   if (a.done && a.kind !== 'seer') return `<div class="sleep"><b>เรียบร้อย</b><div>รอจนกว่าจะถึงเวลาหลับตา</div></div>`;
   switch (a.kind) {
     case 'cupid': return `<div class="stack"><h2 style="font-size:1.7rem">เลือกคู่รัก 2 คน</h2><div class="muted">ถ้าคนหนึ่งตาย อีกคนจะตายตาม</div>${opts(a.options, 2)}</div>`;
-    case 'bodyguard': return `<div class="stack"><h2 style="font-size:1.7rem">ปกป้องใคร</h2><div class="muted">ถ้าเขาถูกหมาป่าโจมตี คุณจะตายแทน ${a.last ? `(คืนก่อนปกป้อง ${esc(a.last)} ไปแล้ว)` : ''}</div>${opts(a.options, 1)}</div>`;
-    case 'doctor': return `<div class="stack"><h2 style="font-size:1.7rem">ช่วยชีวิตใคร</h2><div class="muted">ช่วยตัวเองได้ ${a.last ? `(คืนก่อนช่วย ${esc(a.last)} ไปแล้ว)` : ''}</div>${opts(a.options, 1)}</div>`;
+    case 'bodyguard': return `<div class="stack"><h2 style="font-size:1.7rem">ปกป้องใคร</h2><div class="muted">ปกป้องคนอื่นได้ 1 คน ถ้าเขาถูกหมาป่าโจมตีจะรอด ${a.last ? `(คืนก่อนปกป้อง ${esc(a.last)} ไปแล้ว เลือกซ้ำไม่ได้)` : ''}</div>${opts(a.options, 1)}</div>`;
     case 'seer': return a.result ? `<div class="stack"><div class="verdict ${a.result.wolf ? 'w' : 'v'}">${esc(a.result.name)}<div style="font-family:var(--body);font-size:1.1rem;margin-top:6px">${a.result.wolf ? 'เป็นหมาป่า' : 'ไม่ใช่หมาป่า'}</div></div></div>` : `<div class="stack"><h2 style="font-size:1.7rem">ตรวจใคร</h2>${opts(a.options, 1)}</div>`;
     case 'wolves': {
       const names = Object.fromEntries(a.mates.map(m => [m.id, m.name]));
@@ -530,8 +795,6 @@ function bindPlayer(a) {
   const q = s => $app.querySelector(s), qa = s => $app.querySelectorAll(s);
   const lv = q('#lv'); if (lv) lv.onclick = () => { send({ t: 'leave' }); LS.del('ww_player'); mode = null; V = null; renderLanding(); };
   const rd = q('#rdy'); if (rd) rd.onclick = () => send({ t: 'ready' });
-  bindHold('pk', () => { const rc = document.getElementById('rc'); if (rc) rc.innerHTML = peek ? myRoleCard(false) : ''; });
-  if (V.phase === 'reveal') bindHold('rc', () => { const rc = document.getElementById('rc'); rc.innerHTML = myRoleCard(!peek); });
   qa('[data-pick]').forEach(b => b.onclick = () => {
     const id = b.dataset.pick, max = +b.dataset.max;
     if (sel.includes(id)) sel = sel.filter(x => x !== id); else { sel.push(id); if (sel.length > max) sel.shift(); }
@@ -554,6 +817,36 @@ function bindPlayer(a) {
   };
   const ak = q('#ack'); if (ak) ak.onclick = () => send({ t: 'ack' });
 }
+
+/* ───────── การ์ดบทบาทประจำหน้าจอ (กดค้างเพื่อดู) ───────── */
+const dockEl = document.getElementById('dock'), pcard = document.getElementById('pcard'), peekEl = document.getElementById('peek');
+pcard.querySelector('.back').innerHTML = BACK;
+let dockRole = null, peek = false;
+function infoHtml() {
+  const me = V.me, r = ROLES[me.role]; let x = `<div class="pkname">${esc(r.n)}</div><div class="pkteam ${me.role === 'wolf' ? 'wolf' : ''}">${esc(r.t)}</div><p>${esc(r.d)}</p>`;
+  if (me.mates && me.mates.length) x += `<div class="chip wolf">พวกหมาป่า: ${me.mates.map(m => esc(m.name)).join(', ')}</div>`;
+  if (me.lover) x += `<div class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} คู่รักของคุณคือ ${esc(me.lover)}</div>`;
+  return x;
+}
+function fillPeek() { peekEl.querySelector('.pk-card').innerHTML = cardFace(V.me.role); peekEl.querySelector('.pk-info').innerHTML = infoHtml(); }
+function setPeek(v) {
+  if (v === peek) return; if (v && !(V && V.me && V.me.role)) return;
+  peek = v; pcard.classList.toggle('show', v); peekEl.hidden = !v; if (v) fillPeek();
+}
+function hideDock() { setPeek(false); dockEl.hidden = true; document.body.classList.remove('hasdock', 'dockbig', 'sleepy'); dockRole = null; }
+function updateDock() {
+  const vis = V && V.who === 'player' && V.me && V.me.role && V.phase !== 'lobby' && V.phase !== 'ended';
+  if (!vis) return hideDock();
+  if (dockRole !== V.me.role) { dockRole = V.me.role; pcard.querySelector('.front').innerHTML = cardFace(dockRole); }
+  dockEl.hidden = false; document.body.classList.add('hasdock'); document.body.classList.toggle('dockbig', V.phase === 'reveal');
+  if (peek) fillPeek();
+}
+pcard.addEventListener('pointerdown', e => { e.preventDefault(); try { pcard.setPointerCapture(e.pointerId); } catch (_) {} setPeek(true); });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => pcard.addEventListener(ev, () => setPeek(false)));
+window.addEventListener('blur', () => setPeek(false));
+pcard.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setPeek(true); } });
+pcard.addEventListener('keyup', () => setPeek(false));
+document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('#pcard')) e.preventDefault(); });
 
 /* ───────── เริ่มต้น ───────── */
 (function boot() {
