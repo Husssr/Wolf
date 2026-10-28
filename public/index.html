@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0a1216">
-<title>ค่ำคืนหมาป่า</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230a1216'/%3E%3Cpath d='M5 4l4 4h6l4-4v9c0 4-3 7-7 7s-7-3-7-7z' fill='%23ece6d3'/%3E%3C/svg%3E">
+<title>Werewolf</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a1216'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='%23bcd6e2' opacity='.35'/%3E%3Cpath d='M4 4l7 7h10l7-7v14c0 6.5-5.5 10-12 10S4 24.500 4 18z' fill='%23ece6d3'/%3E%3Cpath d='M9 17l5 2.500M23 17l-5 2.500' stroke='%23e0613f' stroke-width='2.600' stroke-linecap='round'/%3E%3Cpath d='M13.500 23.500h5l-2.500 2.800z' fill='%230a1216'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -246,6 +246,74 @@ body.sleepy #dock{background:linear-gradient(180deg,transparent,#000 46%);opacit
 @media(prefers-reduced-motion:reduce){.rip{display:none}.pcard .in{transition:none}#peek .pk-card{animation:none}}
 input[type=range]{accent-color:var(--gold2)}
 .qr{padding:6px;background:#fff}
+
+/* ===== รอบปรับปรุง 2: โลโก้หมาป่า / โต๊ะแจกไพ่ / สรุปจบเกม ===== */
+.logo{width:112px;height:112px;margin:0 auto 18px;filter:drop-shadow(0 0 26px rgba(188,214,226,.4))}
+.logo svg{width:100%;height:100%;display:block}
+.logo.load{animation:logopulse 2.2s ease-in-out infinite}
+@keyframes logopulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 22px rgba(188,214,226,.3))}50%{transform:scale(1.06);filter:drop-shadow(0 0 40px rgba(188,214,226,.6))}}
+.hero h1{letter-spacing:.04em}
+@media(max-height:520px) and (orientation:landscape){.logo{width:64px;height:64px;margin-bottom:8px}}
+@media(prefers-reduced-motion:reduce){.logo.load{animation:none}}
+
+/* โต๊ะแจกไพ่ (จอผู้คุมเกม) */
+.dealrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%}
+.dealside{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;justify-items:center;text-align:center;min-width:0;max-width:100%}
+.dealside .bar{width:100%}
+.arena{--cwf:.11;--cw:calc(var(--A) * var(--cwf));--A:min(86vw,520px);position:relative;width:var(--A);height:var(--A);margin:0 auto;flex:none}
+@supports (height:100dvh){.arena{--A:max(260px,min(86vw,calc(100dvh - 300px),760px))}}
+@media(min-aspect-ratio:13/10){
+  .dealrow{flex-direction:row;gap:36px}.dealside{width:min(340px,30vw)}
+  .arena{--A:min(62vw,560px)}
+}
+@supports (height:100dvh){@media(min-aspect-ratio:13/10){.arena{--A:max(260px,min(62vw,calc(100dvh - 150px),820px))}}}
+.tablering{position:absolute;inset:7%;border-radius:50%;border:1px dashed rgba(227,189,98,.2);pointer-events:none}
+.deckglow{position:absolute;left:50%;top:50%;width:calc(var(--cw) * 2.4);height:calc(var(--cw) * 2.4);margin:calc(var(--cw) * -1.2) 0 0 calc(var(--cw) * -1.2);border-radius:50%;background:radial-gradient(circle,rgba(227,189,98,.22),transparent 65%);pointer-events:none}
+.dc,.sc{position:absolute;left:50%;top:50%;width:var(--cw);aspect-ratio:200/280;margin:calc(var(--cw) * -.7) 0 0 calc(var(--cw) * -.5);will-change:transform,opacity;pointer-events:none}
+.dc{opacity:0}
+.cardback{width:100%;height:100%;border-radius:7%/5%;overflow:hidden;background:#0c1a21;box-shadow:0 3px 9px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.7)}
+.cardback svg{display:block;width:100%;height:100%}
+.dc.ok .cardback{box-shadow:0 0 0 2px var(--moss),0 0 14px rgba(133,184,144,.6)}
+.seat{position:absolute;transform:translate(-50%,-50%);max-width:calc(var(--A) * .2);padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:rgba(9,17,21,.82);
+  font-size:clamp(.68rem,calc(var(--A) * .022),1.05rem);font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.seat .sn{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.seat.off{opacity:.5}
+.seat .tick{display:none;font-style:normal}
+.seat.ok{border-color:var(--moss);color:var(--moss)}
+.seat.ok .tick{display:inline}
+
+/* การ์ดที่ถูกแจกบนโทรศัพท์ */
+.dealzone{display:grid;gap:14px;justify-items:center;align-content:center;min-height:55vh;text-align:center}
+.dealcap{font-family:var(--display);font-size:1.4rem;min-height:2.4em;color:var(--bone);display:grid;place-items:center}
+.minewrap{position:relative;display:grid;place-items:center}
+.mineslot{--mw:min(62vw,250px);width:var(--mw);aspect-ratio:200/280;position:relative;perspective:1000px;cursor:pointer;touch-action:manipulation;will-change:transform}
+@supports (height:100dvh){.mineslot{--mw:min(62vw,250px,calc((100dvh - 330px) * .714))}}
+.mineslot:focus-visible{outline:2px solid var(--moon);outline-offset:6px}
+.mcard{position:absolute;inset:0;transform-style:preserve-3d}
+.mcard .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:7%/5%;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 40px rgba(227,189,98,.18)}
+.mcard .front{transform:rotateY(180deg);container-type:inline-size}
+.mineinfo{max-width:34ch;display:grid;gap:8px;justify-items:center;min-height:6.5em;visibility:hidden}
+.mineinfo p{margin:0;color:var(--bone);font-size:.95rem}
+.minideck{position:absolute;left:50%;top:50%;width:70px;height:100px;margin:-50px 0 0 -35px;pointer-events:none}
+.minideck i{position:absolute;inset:0;border-radius:8px;border:2px solid var(--gold3);background:linear-gradient(180deg,#14303a,#0c1a21);animation:mshuf 1s ease-in-out infinite}
+.minideck i:nth-child(2){animation-delay:.15s}.minideck i:nth-child(3){animation-delay:.3s}.minideck i:nth-child(4){animation-delay:.45s}
+@keyframes mshuf{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(-34px) rotate(-9deg)}60%{transform:translateX(34px) rotate(9deg)}}
+@media(prefers-reduced-motion:reduce){.minideck i{animation:none}}
+
+/* หน้าสรุปเมื่อจบเกม */
+.sum{width:min(980px,100%);text-align:left}
+.frow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:10px;align-items:center;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(9,17,21,.5)}
+.frow.w{border-color:rgba(224,97,63,.55)}
+.frow.dead .fn b{text-decoration:line-through;opacity:.7}
+.fn{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.fd{font-size:.92rem}
+@media(max-width:520px){.frow{grid-template-columns:1fr;gap:4px}}
+.rnd{display:grid;gap:2px}
+.rh{font-family:var(--display);color:var(--gold1);font-size:1.15rem;margin-top:8px}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:7px 0;border-bottom:1px dashed rgba(42,67,80,.8)}
+.ev svg.ic{margin-top:2px;color:var(--gold2)}
+.ev.bad svg.ic{color:var(--ember)}
+.ev small{display:block;color:var(--mute);font-size:.85rem}
 </style>
 </head>
 <body>
@@ -291,6 +359,25 @@ const ICON = {
   vote:'<path d="M5 11l7-7 7 7M5 20h14M12 4v12"/>',
 };
 const ic = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
+/* ───────── โลโก้หมาป่า (วาดเอง ไม่ใช้รูปภายนอก) ───────── */
+const LOGO = `<svg viewBox="0 0 120 120" role="img" aria-label="Werewolf"><defs>
+  <radialGradient id="lgMoon" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#f3f1e4"/><stop offset="1" stop-color="#bcd6e2"/></radialGradient>
+  <linearGradient id="lgGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc94"/><stop offset=".55" stop-color="#c9993f"/><stop offset="1" stop-color="#f1d58a"/></linearGradient></defs>
+  <circle cx="60" cy="58" r="55" fill="url(#lgMoon)"/>
+  <path d="M60 4a55 55 0 0 1 0 108" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1.5"/>
+  <g transform="translate(60 66) scale(.84) translate(-60 -66)">
+    <path d="M16 18L42 44Q60 38 78 44L104 18L106 66Q106 94 86 106L74 113Q60 119 46 113L34 106Q14 94 14 66Z" fill="#0b161b" stroke="url(#lgGold)" stroke-width="3.6" stroke-linejoin="round"/>
+    <path d="M25 33L40 50L26 64ZM95 33L80 50L94 64Z" fill="#3a2a22" stroke="url(#lgGold)" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M60 46V60M52 50L55 60M68 50L65 60" stroke="url(#lgGold)" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M30 68Q44 57 57 71Q43 76 30 68ZM90 68Q76 57 63 71Q77 76 90 68Z" fill="#e0613f" stroke="#ffb7a3" stroke-width="1.4"/>
+    <path d="M44 63V74M76 63V74" stroke="#1a0b06" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M14 76L30 80M15 90L31 88M106 76L90 80M105 90L89 88" stroke="url(#lgGold)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M46 90Q60 80 74 90L67 106Q60 111 53 106Z" fill="#17252b" stroke="url(#lgGold)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M53 89H67L60 98Z" fill="url(#lgGold)"/>
+    <path d="M60 98V104" stroke="url(#lgGold)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M50 105L54 118L58 106ZM70 105L66 118L62 106Z" fill="#ece6d3" stroke="#10202a" stroke-width="1"/>
+  </g></svg>`;
+
 
 /* ───────── การ์ดบทบาท: ภาพวาดเวกเตอร์ ลายเส้นทองบนพื้นมืด ───────── */
 const G = '#e3bd62', BONE = '#ece6d3', DK = '#17252b';
@@ -414,6 +501,7 @@ function connect(first) {
     else if (m.t === 'state') { offset = m.now - Date.now(); const k = JSON.stringify(m, (a, b) => a === 'now' ? undefined : b); if (k === (V && V._k)) return; m._k = k; V = m; onState(); }
     else if (m.t === 'error') { errMsg = m.msg; toast(m.msg); if (!V) renderLanding(); }
     else if (m.t === 'gone') { LS.del('ww_host'); mode = null; V = null; renderLanding(); }
+    else if (m.t === 'disbanded') { LS.del('ww_player'); mode = null; V = null; toast('ผู้คุมเกมยุบห้องแล้ว'); renderLanding(); }
     else if (m.t === 'kicked') { LS.del('ww_player'); mode = null; V = null; toast('ผู้คุมเกมนำคุณออกจากห้อง'); renderLanding(); }
   };
   ws.onclose = () => { if (closed) return; setTimeout(() => { if (mode) connect(); }, Math.min(4000, 400 + retry++ * 500)); };
@@ -431,6 +519,15 @@ function tone(f1, f2, dur, type = 'sine', vol = .12, delay = 0) {
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .25); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(fl); fl.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + .05);
 }
+function noise(dur, freq, vol = .2, delay = 0, q = 1) {
+  const a = ac(); if (!a || !soundOn) return; const t = a.currentTime + delay;
+  const len = Math.max(1, Math.floor(a.sampleRate * dur)), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  s.buffer = buf; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(a.destination); s.start(t);
+}
 const FX = {
   howl(){ tone(260, 560, 1.4, 'sawtooth', .1); tone(560, 330, 1.6, 'sawtooth', .09, 1.3); tone(264, 568, 1.4, 'triangle', .07); },
   night(){ tone(110, 80, 2.2, 'sine', .14); tone(165, 120, 2.2, 'sine', .06); },
@@ -440,6 +537,9 @@ const FX = {
   drum(){ for (let i = 0; i < 3; i++) tone(120, 60, .35, 'sine', .25, i * .5); },
   shot(){ tone(900, 60, .35, 'sawtooth', .18); },
   dead(){ tone(220, 90, 1.1, 'triangle', .14); },
+  shuffle(){ for (let i = 0; i < 16; i++) noise(.05, 1800 + (i % 4) * 650, .2, i * .042 + (i > 7 ? .1 : 0), .9); tone(160, 120, .7, 'sine', .03); },
+  flick(){ noise(.1, 3600, .32, 0, .8); noise(.06, 1500, .18, .02, 1); tone(640, 260, .09, 'triangle', .035); },
+  flip(){ noise(.12, 2800, .26, 0, .8); tone(520, 780, .16, 'sine', .04); },
 };
 let VS = Object.assign({ gender: 'male', rate: 0.92, pitch: 0, voice: '' }, LS.get('ww_vs') || {});
 const saveVS = () => LS.set('ww_vs', VS);
@@ -497,7 +597,7 @@ function renderLanding() {
   const c = new URLSearchParams(location.search).get('c') || '';
   const h = LS.get('ww_host'), p = LS.get('ww_player');
   $app.innerHTML = `<div class="narrow hero fade">
-    <div class="moon"></div><h1>ค่ำคืนหมาป่า</h1><p>เกมมนุษย์หมาป่าที่เล่นต่อหน้ากัน<br>เครื่องผู้คุมเกมเป็นผู้บรรยาย โทรศัพท์ของทุกคนเป็นการ์ดบทบาทลับ</p>
+    <div class="logo">${LOGO}</div><h1>Werewolf</h1><p>เกมมนุษย์หมาป่าที่เล่นต่อหน้ากัน<br>เครื่องผู้คุมเกมเป็นผู้บรรยาย โทรศัพท์ของทุกคนเป็นการ์ดบทบาทลับ</p>
     <div class="card stack" style="text-align:left">
       <div class="lbl">เข้าร่วมเกมของเพื่อน</div>
       <input id="jc" class="field" inputmode="numeric" maxlength="4" placeholder="รหัสห้อง 4 หลัก" value="${esc(c)}">
@@ -526,6 +626,7 @@ function renderLanding() {
 
 function onState() {
   if (V.who !== mode) return;
+  syncDeal();
   if (mode === 'host') { narrate(); renderHost(); } else { renderPlayer(); updateDock(); }
   keepAwake();
 }
@@ -537,12 +638,19 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 const WIN = { village: 'ชาวบ้านชนะ', wolves: 'หมาป่าชนะ', lovers: 'คู่รักชนะ', tanner: 'คนบ้าชนะ' };
 function topbar() {
   return `<div class="top"><div class="row"><span class="chip">${ic('moon')} ห้อง ${esc(V.code)}</span><span class="chip">${V.players.filter(p => p.alive).length}/${V.players.length} คนยังอยู่</span></div>
-    <div class="row"><button class="btn small ghost" id="snd">${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? '<button class="btn small ghost" id="cls">ปิดเกม</button>' : ''}</div></div>`;
+    <div class="row"><button class="btn small ghost" id="snd">${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? '<button class="btn small ghost" id="cls">ปิดเกม</button>' : ''}<button class="btn small ghost" id="home">หน้าหลัก</button><button class="btn small ghost" id="dis">ยุบห้อง</button></div></div>`;
 }
 function bindTop() {
   const s = document.getElementById('snd'); if (s) s.onclick = () => { soundOn = !soundOn; if (!soundOn && window.speechSynthesis) speechSynthesis.cancel(); renderHost(); };
   const c = document.getElementById('cls'); if (c) c.onclick = () => { if (c.dataset.s) { send({ t: 'closeGame' }); } else { c.dataset.s = 1; c.textContent = 'กดอีกครั้งเพื่อยืนยัน'; setTimeout(() => { c.dataset.s = ''; c.textContent = 'ปิดเกม'; }, 3000); } };
+  twoTap('home', 'หน้าหลัก', 'กดอีกครั้งเพื่อออกไปหน้าหลัก', goHome);
+  twoTap('dis', 'ยุบห้อง', 'กดอีกครั้งเพื่อยุบห้อง', () => send({ t: 'disband' }));
 }
+function twoTap(id, label, ask, fn) {
+  const b = document.getElementById(id); if (!b) return;
+  b.onclick = () => { if (b.dataset.s) return fn(); b.dataset.s = 1; b.textContent = ask; setTimeout(() => { if (b.isConnected) { b.dataset.s = ''; b.textContent = label; } }, 3000); };
+}
+function goHome() { dealStop(); if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } V = null; renderLanding(); }
 function renderHost() {
   const ph = V.phase, fn = { lobby: hostLobby, reveal: hostReveal, night: hostNight, dawn: hostDay, discuss: hostDiscuss, vote: hostVote, point: hostPoint,
     voteResult: hostResult, lynch: hostDay, hunter: hostHunter, ended: hostEnd }[ph] || hostDay;
@@ -656,11 +764,16 @@ function drawQR(url) {
 }
 function stageHtml(inner, cls = '') { return `<div class="wrap"><div class="stage ${cls}">${topbar()}<div class="center fade">${inner}</div><div>${pgrid(false)}</div></div></div>`; }
 function hostReveal() {
-  const r = V.players.filter(p => p.ready).length;
-  $app.innerHTML = stageHtml(`<h2 class="big">ดูบทบาทของตัวเองบนโทรศัพท์</h2><p class="sub">กดค้างเพื่อดูบทบาท แล้วกดรับทราบ อย่าให้คนอื่นเห็น</p>
-    <div class="bar"><i style="width:${r / V.players.length * 100}%"></i></div><div class="muted">พร้อมแล้ว ${r} จาก ${V.players.length} คน</div>
-    <button class="btn" id="sk">เริ่มกลางคืนเลย</button>`, 'night');
+  const n = V.players.length, r = V.players.filter(p => p.ready).length;
+  $app.innerHTML = `<div class="wrap"><div class="stage night">${topbar()}<div class="center" style="padding:0"><div class="dealrow">${arenaHtml()}<div class="dealside">
+      <div class="lbl">แจกบทบาท</div><h2 class="big" id="dealcap" style="font-size:clamp(1.4rem,3vw,2.2rem);max-width:16ch"></h2>
+      <p class="sub" style="font-size:1rem;margin:0">ทุกคนแตะการ์ดบนโทรศัพท์เพื่อดูบทบาท แล้วกดรับทราบ อย่าให้คนอื่นเห็น</p>
+      <div class="bar"><i style="width:${r / n * 100}%"></i></div><div class="muted">พร้อมแล้ว ${r} จาก ${n} คน</div>
+      <div class="row" style="justify-content:center"><button class="btn small ghost" id="skd">ข้ามแอนิเมชัน</button><button class="btn" id="sk">เริ่มกลางคืนเลย</button></div>
+    </div></div></div><div></div></div></div>`;
   bindTop(); document.getElementById('sk').onclick = () => send({ t: 'skip' });
+  document.getElementById('skd').onclick = () => { if (deal) { deal.timers.forEach(clearTimeout); deal.t0 = Date.now() - dealTotal(deal.n) - 1; paintDeal(); } };
+  paintDeal();
 }
 function hostNight() {
   const st = V.step, wolf = st && st.key === 'wolves', open = st && st.stage === 'act';
@@ -700,10 +813,8 @@ function hostHunter() {
   bindTop();
 }
 function hostEnd() {
-  const rl = Object.fromEntries((V.roles || []).map(r => [r.id, r]));
   $app.innerHTML = `<div class="wrap stack fade">${topbar()}<div class="center"><div class="lbl">จบเกม</div><h1 class="win">${esc(WIN[V.winner] || '')}</h1>
-    <div class="pgrid" style="width:100%;max-width:900px">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span><span class="chip ${p.role === 'wolf' ? 'wolf' : ''}">${ic(p.role)} ${esc(ROLES[p.role].n)}</span></div>`).join('')}</div>
-    <div class="row"><button class="btn primary" id="ag">เล่นอีกครั้ง</button></div></div></div>`;
+    <div class="row"><button class="btn primary" id="ag">เล่นอีกครั้ง</button></div>${summaryHtml()}</div></div>`;
   bindTop(); document.getElementById('ag').onclick = () => send({ t: 'again' });
 }
 
@@ -719,13 +830,14 @@ function renderPlayer() {
     body = `<div class="center"><h2 class="big" style="font-size:2rem">เข้าห้องแล้ว</h2><p class="sub">รอผู้คุมเกมกดเริ่ม คุณจะได้เห็นบทบาททางโทรศัพท์เครื่องนี้</p></div><div class="plist">${V.players.map(p => `<div class="pl"><span class="dot ${p.conn ? '' : 'off'}"></span><span class="n">${esc(p.name)}</span></div>`).join('')}</div>`;
     foot = `<button class="btn ghost block" id="lv">ออกจากห้อง</button>`;
   } else if (ph === 'reveal') {
-    body = `<div class="revealtip"><div class="lbl">การ์ดบทบาทของคุณ</div><h2 style="font-size:1.8rem">กดค้างที่การ์ดมุมขวาล่าง</h2><p class="sub" style="margin:0 auto">ปล่อยนิ้วเพื่อซ่อน อย่าให้คนอื่นเห็นบทบาทของคุณ</p></div>`;
-    foot = `<button class="btn primary block" id="rdy" ${me.ready ? 'disabled' : ''}>${me.ready ? 'รับทราบแล้ว รอคนอื่น' : 'รับทราบ'}</button>`;
+    body = mineHtml();
+    const seen = !!(deal && deal.ever);
+    foot = `<button class="btn primary block" id="rdy" ${me.ready || !seen ? 'disabled' : ''}>${me.ready ? 'รับทราบแล้ว รอคนอื่น' : (seen ? 'รับทราบ' : 'แตะการ์ดเพื่อดูบทบาทก่อน')}</button>`;
   } else if (ph === 'ended') {
     const w = V.winner, mine = me.role === 'wolf' ? 'wolves' : (me.role === 'tanner' ? 'tanner' : 'village');
     const won = w === mine || (w === 'lovers' && me.lover);
     body = `<div class="verdict ${won ? 'v' : 'w'}">${esc(WIN[w] || '')}<div style="font-family:var(--body);font-size:1rem;margin-top:6px">${won ? 'ยินดีด้วย ฝั่งของคุณชนะ' : 'เกมนี้ฝั่งของคุณแพ้'}</div></div>
-      <div class="pgrid" style="grid-template-columns:1fr 1fr">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span><span class="r">${esc(ROLES[p.role] ? ROLES[p.role].n : '')}</span></div>`).join('')}</div>`;
+      ${summaryHtml()}`;
     foot = `<p class="caption">รอผู้คุมเกมเริ่มรอบใหม่</p>`;
   } else if (a && a.kind === 'hunter') {
     setSel(key);
@@ -758,6 +870,7 @@ function renderPlayer() {
   if (cls) document.body.style.background = '#000'; else document.body.style.background = '';
   document.body.classList.toggle('sleepy', !!cls);
   bindPlayer(a);
+  paintDeal();
 }
 function opts(list, max, bad) {
   return `<div class="opts">${list.map(o => `<button class="opt ${bad ? 'bad' : ''} ${sel.includes(o.id) ? 'sel' : ''}" data-pick="${o.id}" data-max="${max}">${esc(o.name)}</button>`).join('')}</div>`;
@@ -794,7 +907,7 @@ function actFoot(a) {
 function bindPlayer(a) {
   const q = s => $app.querySelector(s), qa = s => $app.querySelectorAll(s);
   const lv = q('#lv'); if (lv) lv.onclick = () => { send({ t: 'leave' }); LS.del('ww_player'); mode = null; V = null; renderLanding(); };
-  const rd = q('#rdy'); if (rd) rd.onclick = () => send({ t: 'ready' });
+  const rd = q('#rdy'); if (rd) rd.onclick = () => { send({ t: 'ready' }); ackDeal(); };
   qa('[data-pick]').forEach(b => b.onclick = () => {
     const id = b.dataset.pick, max = +b.dataset.max;
     if (sel.includes(id)) sel = sel.filter(x => x !== id); else { sel.push(id); if (sel.length > max) sel.shift(); }
@@ -818,6 +931,151 @@ function bindPlayer(a) {
   const ak = q('#ack'); if (ak) ak.onclick = () => send({ t: 'ack' });
 }
 
+/* ───────── เอฟเฟกต์สับไพ่และแจกการ์ด ───────── */
+const REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const DEAL = { S: 2800, GAP: 350, FL: 650, CY: 1300 };
+let deal = null, dealRaf = 0;
+const clamp = x => Math.min(1, Math.max(0, x));
+const easeOut = x => 1 - Math.pow(1 - clamp(x), 3);
+const dealStep = n => n <= 8 ? 420 : n <= 12 ? 340 : 280;
+const dealTotal = n => DEAL.S + DEAL.GAP + (n - 1) * dealStep(n) + DEAL.FL + 250;
+const cwFactor = n => n <= 6 ? .14 : n <= 8 ? .125 : n <= 12 ? .105 : n <= 15 ? .095 : .085;
+const seatAngle = (i, n) => -Math.PI / 2 + i * 2 * Math.PI / n;
+function dealStop() { if (deal) deal.timers.forEach(clearTimeout); deal = null; if (dealRaf) { cancelAnimationFrame(dealRaf); dealRaf = 0; } }
+function dealStart(settled) {
+  dealStop();
+  const n = V.players.length;
+  deal = { t0: Date.now(), n, step: dealStep(n), timers: [], flipped: false, flipAt: 0, ever: false };
+  if (settled || REDUCE) { deal.t0 -= dealTotal(n) + 1000; if (settled) deal.ever = true; return; }
+  if (V.who === 'host') {
+    const T = (f, ms) => deal.timers.push(setTimeout(f, ms));
+    T(FX.shuffle, 450); T(FX.shuffle, 450 + DEAL.CY);
+    for (let i = 0; i < n; i++) T(FX.flick, DEAL.S + DEAL.GAP + i * deal.step);
+  }
+}
+function syncDeal() {
+  if (V.phase === 'reveal') { if (!deal) dealStart(V.who === 'host' ? V.players.some(p => p.ready) : !!(V.me && V.me.ready)); }
+  else if (deal) dealStop();
+}
+function dealDone() { return Date.now() - deal.t0 > dealTotal(deal.n) && !(deal.flipAt && Date.now() - deal.flipAt < 800); }
+function dealFrame() { dealRaf = 0; if (deal) paintDeal(); }
+function paintDeal() {
+  if (!deal || !V || V.phase !== 'reveal') return;
+  const el = Date.now() - deal.t0, a = document.getElementById('arena'), m = document.getElementById('mine');
+  if (a) paintArena(a, el);
+  if (m && V.me) paintMine(m, el);
+  if (!dealRaf && !dealDone()) dealRaf = requestAnimationFrame(dealFrame);
+}
+function shufflePose(j, t) {
+  const H = 4, side = j < H ? -1 : 1, q = (j % H) * 2 + (side < 0 ? 0 : 1), yS = -q * .03;
+  if (t >= 2 * DEAL.CY) return { x: 0, y: yS, r: 0, z: q };
+  const c = t >= DEAL.CY ? 1 : 0, u = (t - c * DEAL.CY) / DEAL.CY;
+  const s = easeOut(u / .4), m = easeOut((u - .45 - q * .035) / .3), f = s * (1 - m), spread = c ? 1.05 : 1.4;
+  return { x: side * spread * f, y: yS - Math.sin(m * Math.PI) * .4 - (side < 0 ? 0 : .1) * f, r: side * 7 * f - side * 9 * Math.sin(m * Math.PI), z: q };
+}
+function paintArena(a, el) {
+  const n = deal.n, A = a.clientWidth, cw = A * cwFactor(n), D0 = DEAL.S + DEAL.GAP, st = deal.step;
+  const dealt = el < D0 ? 0 : Math.min(n, Math.floor((el - D0) / st) + 1), vc = Math.ceil(8 * (n - dealt) / n);
+  a.querySelectorAll('.sc').forEach(s => {
+    const P = shufflePose(+s.dataset.j, Math.min(el, 2 * DEAL.CY));
+    s.style.transform = `translate(${P.x * cw}px,${P.y * cw}px) rotate(${P.r}deg)`; s.style.zIndex = P.z; s.style.opacity = P.z < vc ? 1 : 0;
+  });
+  a.querySelectorAll('.dc').forEach(d => {
+    const i = +d.dataset.i, th = seatAngle(i, n), R = n > 12 ? .29 : n > 8 ? .27 : .25, tx = A * R * Math.cos(th), ty = A * R * Math.sin(th);
+    const rot = th * 180 / Math.PI + 90 + (((i * 37) % 11) - 5), p = (el - (D0 + i * st)) / DEAL.FL;
+    if (p <= 0) { d.style.opacity = 0; return; }
+    const e = easeOut(p), lift = Math.sin(clamp(p) * Math.PI);
+    d.style.opacity = 1; d.style.zIndex = 20 + i;
+    d.style.transform = `translate(${tx * e}px,${ty * e - lift * cw * .5}px) rotate(${rot * e}deg) scale(${1 + .14 * lift})`;
+  });
+  const fin = el >= dealTotal(n) - 250, cap = document.getElementById('dealcap'), sk = document.getElementById('skd');
+  if (cap) cap.textContent = el < DEAL.S ? 'กำลังสับไพ่…' : !fin ? 'กำลังแจกไพ่…' : 'แจกไพ่ครบแล้ว';
+  if (sk) sk.hidden = fin;
+}
+function paintMine(m, el) {
+  const idx = Math.max(0, V.players.findIndex(p => p.id === V.me.id)), start = DEAL.S + DEAL.GAP + idx * deal.step;
+  const p = (el - start) / DEAL.FL, e = easeOut(p), arrived = p >= 1;
+  m.style.opacity = p <= 0 ? 0 : 1;
+  m.style.transform = arrived ? 'none' : `translateY(${-(1 - e) * innerHeight * .5}px) rotate(${-(1 - e) * 24}deg) scale(${.7 + .3 * e})`;
+  m.style.pointerEvents = arrived ? '' : 'none';
+  const t = deal.flipAt ? clamp((Date.now() - deal.flipAt) / 600) : 1, k = easeOut(t);
+  m.querySelector('.mcard').style.transform = `rotateY(${deal.flipped ? 180 * k : 180 * (1 - k) * (deal.flipAt ? 1 : 0)}deg)`;
+  const cap = document.getElementById('mcap'), md = document.getElementById('minideck'), inf = document.getElementById('minfo');
+  if (md) md.style.visibility = p <= 0 ? 'visible' : 'hidden';
+  if (cap) cap.textContent = el < DEAL.S ? 'กำลังสับไพ่…' : p < 1 ? 'กำลังแจกไพ่…' : deal.flipped ? 'แตะการ์ดอีกครั้งเพื่อคว่ำ' : deal.ever ? 'แตะเพื่อดูบทบาทอีกครั้ง' : 'การ์ดของคุณมาแล้ว แตะเพื่อพลิกดูบทบาท';
+  if (inf) inf.style.visibility = deal.flipped && t >= 1 ? 'visible' : 'hidden';
+}
+function tapMine() {
+  if (!deal || !V || V.phase !== 'reveal' || !V.me) return;
+  const idx = Math.max(0, V.players.findIndex(p => p.id === V.me.id));
+  if (Date.now() - deal.t0 < DEAL.S + DEAL.GAP + idx * deal.step + DEAL.FL) return;
+  ac(); deal.flipped = !deal.flipped; deal.flipAt = Date.now(); if (deal.flipped) deal.ever = true; FX.flip();
+  renderPlayer();
+}
+function ackDeal() { if (deal && deal.flipped) { deal.flipped = false; deal.flipAt = Date.now(); paintDeal(); } }
+$app.addEventListener('click', e => { if (e.target.closest && e.target.closest('#mine')) tapMine(); });
+$app.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && e.target.id === 'mine') { e.preventDefault(); tapMine(); } });
+function arenaHtml() {
+  const n = V.players.length;
+  const seats = V.players.map((p, i) => { const th = seatAngle(i, n);
+    return `<div class="seat ${p.conn ? '' : 'off'} ${p.ready ? 'ok' : ''}" style="left:${(50 + 42 * Math.cos(th)).toFixed(2)}%;top:${(50 + 42 * Math.sin(th)).toFixed(2)}%"><span class="sn">${esc(p.name)}</span><i class="tick">✓</i></div>`; }).join('');
+  const deck = [0, 1, 2, 3, 4, 5, 6, 7].map(j => `<div class="sc" data-j="${j}"><div class="cardback">${BACK}</div></div>`).join('');
+  const cards = V.players.map((p, i) => `<div class="dc ${p.ready ? 'ok' : ''}" data-i="${i}"><div class="cardback">${BACK}</div></div>`).join('');
+  return `<div class="arena" id="arena" style="--cwf:${cwFactor(n)}"><div class="tablering"></div><div class="deckglow"></div>${seats}${deck}${cards}</div>`;
+}
+function mineHtml() {
+  return `<div class="dealzone"><div class="dealcap" id="mcap"></div>
+    <div class="minewrap"><div class="minideck" id="minideck"><i></i><i></i><i></i><i></i></div>
+      <div class="mineslot" id="mine" role="button" tabindex="0" aria-label="การ์ดบทบาทของคุณ แตะเพื่อพลิก"><div class="mcard"><div class="face back cardback">${BACK}</div><div class="face front">${cardFace(V.me.role)}</div></div></div></div>
+    <div class="mineinfo" id="minfo">${infoHtml()}</div></div>`;
+}
+
+/* ───────── หน้าสรุปเมื่อจบเกม: ใครเป็นอะไร ใครตายเพราะอะไร ───────── */
+const pName = id => { const p = V.players.find(x => x.id === id); return p ? p.name : '?'; };
+const pRole = id => { const p = V.players.find(x => x.id === id); return p && ROLES[p.role] ? ROLES[p.role].n : ''; };
+const evWho = id => `<b>${esc(pName(id))}</b> <span class="muted">(${esc(pRole(id))})</span>`;
+function causeText(e) {
+  return { wolves: 'ถูกหมาป่ากัด', witch: 'ถูกแม่มดวางยา', hunter: 'ถูกนายพราน ' + pName(e.from) + ' ยิง', vote: 'ถูกโหวตออก', lover: 'ตายตามคู่รัก ' + pName(e.from) }[e.by] || 'ออกจากเกม';
+}
+function story() {
+  const rounds = [], fate = {}; let cur = null, night = 0;
+  (V.events || []).forEach(e => {
+    if (e.k === 'day') { cur = { label: 'กลางวันที่ ' + e.n, items: [] }; rounds.push(cur); return; }
+    if (e.n !== night || !cur) { night = e.n; cur = { label: 'คืนที่ ' + e.n, items: [] }; rounds.push(cur); }
+    cur.items.push(e);
+    if (e.k === 'kill') fate[e.t] = { e, when: cur.label };
+  });
+  return { rounds: rounds.filter(r => r.items.length), fate };
+}
+function evRow(e) {
+  let icon = 'moon', bad = false, html = '';
+  switch (e.k) {
+    case 'cupid': icon = 'cupid'; html = `คิวปิดจับคู่ ${evWho(e.a[0])} กับ ${evWho(e.a[1])}`; break;
+    case 'guard': icon = 'bodyguard'; html = `บอดี้การ์ดปกป้อง ${evWho(e.t)}`; break;
+    case 'seer': icon = 'seer'; html = `เซียตรวจ ${evWho(e.t)}<small>${e.wolf ? 'เป็นหมาป่า' : 'ไม่ใช่หมาป่า'}</small>`; break;
+    case 'saved': icon = 'wolf'; html = `หมาป่าเลือกกัด ${evWho(e.t)} แต่รอดมาได้<small>${e.by === 'witch' ? 'แม่มดใช้ยาชุบชีวิตช่วยไว้' : 'บอดี้การ์ดปกป้องไว้'}</small>`; break;
+    case 'kill': icon = { wolves: 'wolf', witch: 'witch', hunter: 'hunter', vote: 'vote', lover: 'cupid' }[e.by] || 'moon'; bad = true; html = `${evWho(e.t)}<small>${esc(causeText(e))}</small>`; break;
+    case 'vote': {
+      icon = 'vote'; const ids = Object.keys(e.counts || {}).sort((a, b) => e.counts[b] - e.counts[a]);
+      const tl = ids.map(id => `${esc(pName(id))} ${e.counts[id]} คะแนน${e.voters && e.voters[id] ? ' <span class="muted">(' + e.voters[id].map(esc).join(', ') + ')</span>' : ''}`).join(' · ');
+      html = `ผลโหวต: ${tl || (e.t ? 'ทุกคนชี้ตัวพร้อมกัน' : 'ไม่มีคะแนนโหวต')}${e.t ? '' : '<small>ไม่มีใครถูกโหวตออก</small>'}`; break;
+    }
+    default: return '';
+  }
+  return `<div class="ev ${bad ? 'bad' : ''}">${ic(icon)}<div>${html}</div></div>`;
+}
+function summaryHtml() {
+  const { rounds, fate } = story(), cupid = (V.events || []).find(e => e.k === 'cupid');
+  const rows = V.players.map(p => {
+    const f = fate[p.id], r = ROLES[p.role] || ROLES.villager, wolf = p.role === 'wolf';
+    const lover = cupid && cupid.a.includes(p.id) ? cupid.a.find(x => x !== p.id) : null;
+    return `<div class="frow ${wolf ? 'w' : ''} ${p.alive ? '' : 'dead'}"><div class="fn"><b>${esc(p.name)}</b><span class="chip ${wolf ? 'wolf' : ''}">${ic(p.role)} ${esc(r.n)}</span>${lover ? `<span class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} ${esc(pName(lover))}</span>` : ''}</div>
+      <div class="fd muted">${p.alive ? 'รอดชีวิตจนจบเกม' : f ? esc(f.when) + ' · ' + esc(causeText(f.e)) : 'ออกจากเกม'}</div></div>`;
+  }).join('');
+  const tl = rounds.map(r => `<div class="rnd"><div class="rh">${esc(r.label)}</div>${r.items.map(evRow).join('')}</div>`).join('');
+  return `<div class="card stack sum"><div class="lbl">ผู้เล่นและชะตากรรม</div>${rows}</div>${tl ? `<div class="card stack sum"><div class="lbl">เรื่องราวของเกม</div>${tl}</div>` : ''}`;
+}
+
 /* ───────── การ์ดบทบาทประจำหน้าจอ (กดค้างเพื่อดู) ───────── */
 const dockEl = document.getElementById('dock'), pcard = document.getElementById('pcard'), peekEl = document.getElementById('peek');
 pcard.querySelector('.back').innerHTML = BACK;
@@ -835,7 +1093,7 @@ function setPeek(v) {
 }
 function hideDock() { setPeek(false); dockEl.hidden = true; document.body.classList.remove('hasdock', 'dockbig', 'sleepy'); dockRole = null; }
 function updateDock() {
-  const vis = V && V.who === 'player' && V.me && V.me.role && V.phase !== 'lobby' && V.phase !== 'ended';
+  const vis = V && V.who === 'player' && V.me && V.me.role && V.phase !== 'lobby' && V.phase !== 'ended' && V.phase !== 'reveal';
   if (!vis) return hideDock();
   if (dockRole !== V.me.role) { dockRole = V.me.role; pcard.querySelector('.front').innerHTML = cardFace(dockRole); }
   dockEl.hidden = false; document.body.classList.add('hasdock'); document.body.classList.toggle('dockbig', V.phase === 'reveal');
@@ -851,8 +1109,8 @@ document.addEventListener('contextmenu', e => { if (e.target.closest && e.target
 /* ───────── เริ่มต้น ───────── */
 (function boot() {
   const h = LS.get('ww_host'), p = LS.get('ww_player'), c = new URLSearchParams(location.search).get('c');
-  if (h && !c) { mode = 'host'; $app.innerHTML = '<div class="narrow hero"><div class="moon"></div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
-  else if (p && !c) { mode = 'player'; $app.innerHTML = '<div class="narrow hero"><div class="moon"></div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
+  if (h && !c) { mode = 'host'; $app.innerHTML = '<div class="narrow hero"><div class="logo load">' + LOGO + '</div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
+  else if (p && !c) { mode = 'player'; $app.innerHTML = '<div class="narrow hero"><div class="logo load">' + LOGO + '</div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
   else renderLanding();
 })();
 })();
