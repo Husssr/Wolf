@@ -397,6 +397,26 @@ input[type=range]{accent-color:var(--gold2)}
 .seg button{position:relative;overflow:hidden}
 .btn:focus-visible,.seg button:focus-visible,.step button:focus-visible,.tog:focus-visible{outline:2px solid var(--gold1);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.btn.tt.ask{animation:none}}
+
+/* ===== รอบปรับปรุง 5: ปุ่มพอดีอยู่แถวเดียว ไม่ตัดแถว ทุกหน้าจอ ===== */
+.btn.tt .short{display:none}
+.top>.row:last-child{flex-wrap:nowrap;gap:8px;flex:0 1 auto;min-width:0;justify-content:flex-end}
+.top>.row:last-child .btn{flex:0 1 auto;min-width:0;white-space:nowrap;padding:0 16px}
+.top>.row:last-child .btn.small::before,.top>.row:last-child .btn.small::after{display:none}
+.top>.row:first-child{flex-wrap:nowrap;min-width:0}
+.row>.btn{white-space:nowrap}
+#skd,#sk{flex:0 1 auto;min-width:0;padding:0 18px}
+#skd+#sk,#skd{min-height:46px}
+.row:has(#skd){flex-wrap:nowrap}
+@media(max-width:900px){.btn.tt .full{display:none}.btn.tt .short{display:inline}}
+@media(max-width:640px){
+  .top{flex-wrap:wrap;row-gap:8px}
+  .top>.row:last-child{flex:1 1 100%;justify-content:space-between}
+  .top>.row:last-child .btn{flex:1 1 0;padding:0 6px;font-size:.82rem;gap:.3em}
+  .top>.row:last-child .btn svg.ic{width:1em;height:1em}
+  .btn.tt>span{gap:.3em}
+}
+@media(max-width:360px){.top>.row:last-child .btn{font-size:.74rem;padding:0 4px}}
 </style>
 </head>
 <body>
@@ -860,7 +880,7 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 /* ───────── ผู้คุมเกม (ไอแพด) ───────── */
 const WIN = { village: 'ชาวบ้านชนะ', wolves: 'หมาป่าชนะ', lovers: 'คู่รักชนะ', tanner: 'คนบ้าชนะ' };
 /* ปุ่มกดสองครั้งยืนยัน: ซ้อนข้อความทั้งสองแบบไว้ในช่องเดียวกัน ขนาดปุ่มจึงคงที่ ไม่ขยับเมื่อเปลี่ยนเป็นข้อความยืนยัน */
-const ttBtn = (id, icon, label, ask, extra = '') => `<button class="btn small ghost tt ${extra}" id="${id}"><span class="a">${ic(icon)} ${label}</span><span class="c">${ic('check')} ${ask || 'กดอีกครั้งเพื่อยืนยัน'}</span></button>`;
+const ttBtn = (id, icon, label, ask, extra = '') => `<button class="btn small ghost tt ${extra}" id="${id}"><span class="a">${ic(icon)} ${label}</span><span class="c">${ic('check')} <span class="full">${ask || 'กดอีกครั้งเพื่อยืนยัน'}</span><span class="short">กดอีกครั้ง</span></span></button>`;
 function topbar() {
   return `<div class="top"><div class="row"><span class="chip">${ic('moon')} ห้อง ${esc(V.code)}</span><span class="chip">${V.players.filter(p => p.alive).length}/${V.players.length} คนยังอยู่</span></div>
     <div class="row"><button class="btn small ghost" id="snd">${ic(soundOn ? 'sound' : 'mute')} ${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? ttBtn('cls', 'stop', 'ปิดเกม', '') : ''}${ttBtn('home', 'home', 'หน้าหลัก', 'กดอีกครั้งเพื่อออกไปหน้าหลัก')}${ttBtn('dis', 'trash', 'ยุบห้อง', 'กดอีกครั้งเพื่อยุบห้อง', 'danger')}</div></div>`;
