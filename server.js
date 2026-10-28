@@ -110,7 +110,7 @@ function newRoom() {
     phase: 'lobby', night: 0, say: null, sayId: 0, sayCb: null, sayTimer: null,
     tickFn: null, nt: null, potion: { heal: true, poison: true }, lastB: null,
     lovers: null, votes: {}, tally: null, hunterId: null, hunterQueue: [], winner: null,
-    log: [], endsAt: 0, afterHunter: null, lynched: null, touched: Date.now(), msg: '',
+    log: [], events: [], endsAt: 0, afterHunter: null, lynched: null, touched: Date.now(), msg: '',
   };
   rooms.set(code, r); applyAuto(r); return r;
 }
@@ -155,7 +155,7 @@ function startGame(r) {
   const roles = shuffle([].concat(Array(s.wolves).fill('wolf'), spec, Array(n - s.wolves - spec.length).fill('villager')));
   r.players.forEach((p, i) => { p.role = roles[i]; p.alive = true; p.ready = false; p.lover = null; });
   Object.assign(r, { night: 0, potion: { heal: true, poison: true }, lastB: null, lovers: null, votes: {}, tally: null,
-    winner: null, log: [], hunterQueue: [], nt: null, lynched: null });
+    winner: null, log: [], events: [], hunterQueue: [], nt: null, lynched: null });
   r.phase = 'reveal';
   say(r, 'ยินดีต้อนรับสู่เกมมนุษย์หมาป่า ทุกคนโปรดดูบทบาทของตัวเองบนโทรศัพท์ แล้วกดรับทราบ อย่าให้คนอื่นเห็นนะครับ');
   setTick(r, () => { if (r.players.every(p => p.ready || !p.ws)) { setTick(r, null); startNight(r); } });
@@ -238,14 +238,17 @@ function actNight(r, p, m) {
     if (new Set(t).size !== 2 || st.done[p.id]) return;
     r.lovers = t.slice(); byId(r, t[0]).lover = t[1]; byId(r, t[1]).lover = t[0];
     st.done[p.id] = 1; logAdd(r, 'คิวปิดจับคู่ ' + nm(r, t[0]) + ' และ ' + nm(r, t[1]));
+    r.events.push({ k: 'cupid', n: r.night, a: t.slice() });
   } else if (k === 'bodyguard') {
     if (!valid(m.target) || m.target === p.id || m.target === r.lastB || st.done[p.id]) return;
     nt.protB = m.target; st.done[p.id] = 1; logAdd(r, 'บอดี้การ์ดปกป้อง ' + nm(r, m.target));
+    r.events.push({ k: 'guard', n: r.night, t: m.target });
   } else if (k === 'seer') {
     if (m.ack) { if (nt.seerRes) st.done[p.id] = 1; return; }
     if (!valid(m.target) || m.target === p.id || nt.seerRes) return;
     const t = byId(r, m.target); nt.seerRes = { id: t.id, wolf: t.role === 'wolf' };
     logAdd(r, 'เซียตรวจ ' + t.name + (t.role === 'wolf' ? ' (เป็นหมาป่า)' : ' (ไม่ใช่หมาป่า)'));
+    r.events.push({ k: 'seer', n: r.night, t: t.id, wolf: t.role === 'wolf' });
   } else if (k === 'wolves') {
     if (!valid(m.target) || byId(r, m.target).role === 'wolf') return;
     nt.picks[p.id] = m.target;
@@ -276,13 +279,17 @@ function roleSuffix(r, p) { return r.settings.revealOnDeath ? ' ซึ่งเ�
 function dawn(r) {
   const nt = r.nt; let victim = nt.wolfTarget;
   r.lastB = nt.protB;
+  const target = victim;
   if (victim) {
     if (nt.witchSave || nt.protB === victim) victim = null;
   }
+  if (target && !victim) r.events.push({ k: 'saved', n: r.night, t: target, by: nt.witchSave ? 'witch' : 'guard' });
   const kills = [];
   if (victim) kills.push(victim);
   if (nt.witchPoison) kills.push(nt.witchPoison);
   const dead = killPlayers(r, [...new Set(kills)]);
+  dead.forEach(p => r.events.push({ k: 'kill', n: r.night, t: p.id, by: p.id === victim ? 'wolves' : p.id === nt.witchPoison ? 'witch' : 'lover', from: (p.id === victim || p.id === nt.witchPoison) ? undefined : p.lover }));
+  r.events.push({ k: 'day', n: r.night });
   r.phase = 'dawn'; r.nt = null;
   dead.forEach(p => logAdd(r, p.name + ' ตาย (' + ROLE[p.role].name + ')'));
   let text = 'ฟ้าสางแล้ว ทุกคนลืมตาได้';
@@ -318,6 +325,7 @@ function shoot(r, p, target) {
   const t = byId(r, target); if (!t || !t.alive) return;
   setTick(r, null); r.endsAt = 0;
   const dead = killPlayers(r, [t.id]); logAdd(r, 'นายพรานยิง ' + t.name);
+  dead.forEach(d => r.events.push({ k: 'kill', n: r.night, t: d.id, by: d.id === t.id ? 'hunter' : 'lover', from: d.id === t.id ? p.id : d.lover }));
   say(r, 'นายพรานยิง ' + dead.map(d => d.name + roleSuffix(r, d)).join(' และ '), { fx: 'shot', cb: () => processHunters(r, r.hunterNext || (() => {})) });
 }
 
@@ -358,8 +366,10 @@ function finishVote(r) {
 }
 function lynch(r, id) {
   r.tally = r.tally || null;
+  r.events.push({ k: 'vote', n: r.night, t: id || null, counts: (r.tally && r.tally.counts) || {}, voters: (r.tally && r.tally.voters) || {} });
   if (!id) return processHunters(r, () => afterDeaths(r, () => startNight(r)));
   const p = byId(r, id), dead = killPlayers(r, [id]);
+  dead.forEach(d => r.events.push({ k: 'kill', n: r.night, t: d.id, by: d.id === id ? 'vote' : 'lover', from: d.id === id ? undefined : d.lover }));
   logAdd(r, p.name + ' ถูกโหวตออก (' + ROLE[p.role].name + ')');
   r.lynched = id; r.phase = 'lynch';
   let text = dead.map(d => d.name + roleSuffix(r, d)).join(' และ ') + ' ออกจากเกม';
@@ -398,6 +408,7 @@ function hostView(r) {
     hunter: r.hunterId ? nm(r, r.hunterId) : null, lynched: r.lynched, potion: undefined,
     suggest: suggest(Math.max(r.players.length, MIN_PLAYERS)), min: MIN_PLAYERS, max: MAX_PLAYERS,
     roles: r.phase === 'ended' ? r.players.map(p => ({ id: p.id, role: p.role, lover: p.lover })) : undefined,
+    events: r.phase === 'ended' ? r.events : undefined,
   };
 }
 function playerView(r, p) {
@@ -409,7 +420,7 @@ function playerView(r, p) {
     tally: r.tally, settings: { revealOnDeath: r.settings.revealOnDeath, voteMode: r.settings.voteMode }, hunterId: r.hunterId, lynched: r.lynched,
   };
   if (p.role === 'wolf') v.me.mates = r.players.filter(x => x.role === 'wolf' && x.id !== p.id).map(x => ({ id: x.id, name: x.name }));
-  if (r.phase === 'ended') v.roles = r.players.map(x => ({ id: x.id, role: x.role }));
+  if (r.phase === 'ended') { v.roles = r.players.map(x => ({ id: x.id, role: x.role })); v.events = r.events; }
   if (!p.alive && r.phase !== 'lobby') { v.spectate = { log: r.log.slice(-40) }; }
   if (r.phase === 'reveal') v.me.ready = !!p.ready;
   // คำสั่งให้ทำอะไร
@@ -516,6 +527,10 @@ function onConnect(ws) {
           } return broadcast(r);
         case 'again': if (r.phase === 'ended') { resetToLobby(r); broadcast(r); } return;
         case 'closeGame': resetToLobby(r); return broadcast(r);
+        case 'disband':
+          r.players.forEach(p => { if (p.ws && p.ws.open) p.ws.send({ t: 'disbanded' }); });
+          clearTimeout(r.sayTimer); r.tickFn = null; r.sayCb = null; rooms.delete(r.code);
+          ws.send({ t: 'gone' }); room = null; isHost = false; return;
       }
       return;
     }
