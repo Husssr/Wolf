@@ -1,1 +1,568 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0a1216">
+<title>ค่ำคืนหมาป่า</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230a1216'/%3E%3Cpath d='M5 4l4 4h6l4-4v9c0 4-3 7-7 7s-7-3-7-7z' fill='%23ece6d3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* แนวคิด: ฉากกลางคืนในป่า พื้นเข้มอมเขียว แสงจันทร์ซีด ตัวอักษรหัวข้อหนาแบบโปสเตอร์เก่า */
+:root{
+  --ink:#091115; --pine:#10202a; --fog:#182c35; --line:#2a4350;
+  --bone:#ece6d3; --mute:#98aca8; --moon:#bcd6e2; --ember:#e0613f; --moss:#85b890; --gold:#e3bd62;
+  --display:'Chonburi','Noto Serif Thai',Georgia,serif; --body:'Sarabun','Noto Sans Thai',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--ink);color:var(--bone);font-family:var(--body);font-size:17px;line-height:1.5}
+body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:env(safe-area-inset-top,0px) max(16px,env(safe-area-inset-bottom,0px));
+  background:radial-gradient(900px 600px at 85% -10%,rgba(188,214,226,.14),transparent 60%),radial-gradient(700px 500px at 0% 110%,rgba(133,184,144,.09),transparent 60%),var(--ink);
+  background-attachment:fixed;min-height:100vh;overscroll-behavior:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;letter-spacing:.01em;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding-block:18px}
+.narrow{max-width:520px;margin:0 auto;padding-block:18px}
+.card{background:linear-gradient(180deg,rgba(24,44,53,.86),rgba(16,32,42,.86));border:1px solid var(--line);border-radius:14px;padding:18px}
+.lbl{font-size:.8rem;letter-spacing:.08em;color:var(--mute);font-weight:600;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:52px;padding:0 22px;border-radius:12px;border:1px solid var(--line);background:var(--fog);font-weight:600;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--bone);color:#10202a;border-color:var(--bone)}
+.btn.ember{background:var(--ember);border-color:var(--ember);color:#1a0b06}
+.btn.ghost{background:transparent}
+.btn.small{min-height:40px;padding:0 14px;font-size:.92rem;border-radius:10px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.btn.block{width:100%}
+.field{width:100%;min-height:54px;border-radius:12px;border:1px solid var(--line);background:rgba(9,17,21,.7);color:var(--bone);padding:0 16px;font-size:1.1rem;user-select:text;-webkit-user-select:text}
+.field:focus,.btn:focus-visible,.opt:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+.code{font-family:var(--display);font-size:clamp(3rem,9vw,5.5rem);letter-spacing:.14em;line-height:1;color:var(--bone)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:0}
+.stack{display:grid;gap:14px}
+.muted{color:var(--mute)}
+.err{color:#ffb4a0;font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:.4em;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:rgba(9,17,21,.55);font-size:.9rem;font-weight:600}
+.chip.wolf{border-color:var(--ember);color:#ffb7a3}
+.chip.ok{border-color:var(--moss);color:var(--moss)}
+svg.ic{width:1.4em;height:1.4em;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
+/* ลานเข้าเกม */
+.hero{text-align:center;padding-top:6vh}
+.hero h1{font-size:clamp(2.6rem,9vw,4.6rem);line-height:1.1;margin-bottom:6px}
+.hero p{color:var(--mute);margin:0 0 28px}
+.moon{width:92px;height:92px;border-radius:50%;margin:0 auto 22px;background:radial-gradient(circle at 35% 35%,#f3f1e4,#bcd6e2 70%);box-shadow:0 0 70px rgba(188,214,226,.45)}
+.forest{position:fixed;left:0;right:0;bottom:0;height:90px;opacity:.55;pointer-events:none;z-index:-1}
+.divider{display:flex;align-items:center;gap:12px;color:var(--mute);margin:22px 0;font-size:.9rem}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ห้องรอ (ไอแพด) */
+.lobbygrid{align-items:start;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:18px}
+@media(max-width:860px){.lobbygrid{grid-template-columns:1fr}}
+.qr{width:170px;height:170px;border-radius:10px;overflow:hidden;background:#ece6d3;display:grid;place-items:center;flex:none}
+.qr svg{width:100%;height:100%;display:block}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pl{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:rgba(9,17,21,.55);border:1px solid var(--line);min-width:0}
+.pl span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.pl .x{background:none;border:0;color:var(--mute);padding:4px 6px;font-size:1.1rem}
+.pl.dead{opacity:.45;text-decoration:line-through}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--moss);flex:none}
+.dot.off{background:var(--line)}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;min-height:46px;padding:0 12px;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--bone);color:#10202a}
+.tog{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(9,17,21,.4);width:100%;text-align:left}
+.tog.on{border-color:var(--moss);background:rgba(133,184,144,.1)}
+.tog .t{font-weight:600}.tog .d{font-size:.85rem;color:var(--mute);line-height:1.3}
+.sw{width:42px;height:24px;border-radius:99px;background:var(--line);position:relative;transition:.15s}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--bone);transition:.15s}
+.tog.on .sw{background:var(--moss)}.tog.on .sw:after{left:21px;background:#10202a}
+.tog[disabled]{opacity:.7;cursor:default}
+.step{display:flex;align-items:center;gap:10px}
+.step button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--fog);font-size:1.3rem}
+.step b{font-family:var(--display);font-size:1.6rem;min-width:1.6em;text-align:center}
+.mix{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ฉากเกม (ไอแพด) */
+.stage{min-height:calc(100vh - 36px);display:grid;grid-template-rows:auto 1fr auto;gap:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.center{display:grid;place-items:center;text-align:center;align-content:center;gap:18px;padding:10px}
+.big{font-family:var(--display);font-size:clamp(1.8rem,4.6vw,3.4rem);line-height:1.3;max-width:20ch;text-wrap:balance}
+.sub{color:var(--mute);font-size:1.2rem;max-width:34ch}
+.timer{font-family:var(--display);font-size:clamp(4rem,14vw,9rem);line-height:1;font-variant-numeric:tabular-nums}
+.night{background:radial-gradient(900px 600px at 50% 20%,rgba(188,214,226,.1),transparent 65%)}
+.pulse{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;position:relative;color:var(--ink);background:radial-gradient(circle at 35% 35%,#f3f1e4,#bcd6e2 75%);box-shadow:0 0 90px rgba(188,214,226,.4)}
+.pulse svg{width:64px;height:64px;stroke-width:1.6}
+.pulse:after{content:"";position:absolute;inset:-14px;border-radius:50%;border:2px solid rgba(188,214,226,.45);animation:ring 2.4s ease-out infinite}
+@keyframes ring{from{transform:scale(.85);opacity:1}to{transform:scale(1.5);opacity:0}}
+.pulse.wolf{background:radial-gradient(circle at 35% 35%,#ffb7a3,#e0613f 75%);box-shadow:0 0 90px rgba(224,97,63,.5)}
+.pulse.wolf:after{border-color:rgba(224,97,63,.55)}
+.dawn{background:radial-gradient(900px 600px at 50% 0%,rgba(227,189,98,.18),transparent 65%)}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden;width:min(420px,80vw)}
+.bar i{display:block;height:100%;background:var(--moss);transition:width .3s}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.pt{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(9,17,21,.5);display:flex;gap:8px;align-items:center;min-width:0}
+.pt.dead{opacity:.5}.pt.dead .n{text-decoration:line-through}
+.pt .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.pt .r{font-size:.75rem;color:var(--mute)}
+.pt.pick{cursor:pointer;min-height:56px;font-size:1.1rem}
+.tallyrow{display:grid;grid-template-columns:minmax(80px,160px) 1fr auto;gap:12px;align-items:center;width:min(640px,92vw);text-align:left}
+.tallyrow .tb{height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.tallyrow .tb i{display:block;height:100%;background:var(--ember)}
+.win{font-size:clamp(2.2rem,6vw,4.4rem)}
+
+/* มือถือผู้เล่น */
+.phone{max-width:480px;margin:0 auto;min-height:calc(100vh - 20px);display:grid;grid-template-rows:auto 1fr auto;gap:14px;padding-block:14px}
+.phone.sleepy{background:#000}
+.rolecard{border-radius:18px;border:1px solid var(--line);padding:26px 20px;text-align:center;display:grid;gap:12px;justify-items:center;background:linear-gradient(180deg,#14303a,#0d1c24)}
+.rolecard .ic{width:76px;height:76px;stroke-width:1.4}
+.rolecard h2{font-size:2.4rem}
+.rolecard.wolf{background:linear-gradient(180deg,#4a1d14,#1d0c08);border-color:var(--ember)}
+.rolecard.hidden{background:repeating-linear-gradient(45deg,#10202a,#10202a 10px,#14303a 10px,#14303a 20px);min-height:260px;align-content:center;color:var(--mute)}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--fog);font-size:1.1rem;font-weight:600;text-align:left;width:100%}
+.opt.sel{background:var(--bone);color:#10202a;border-color:var(--bone)}
+.opt.bad.sel{background:var(--ember);border-color:var(--ember);color:#1a0b06}
+.opt.dim{opacity:.4}
+.opt small{font-weight:500;color:inherit;opacity:.75}
+.sleep{display:grid;place-items:center;text-align:center;align-content:center;gap:10px;color:#2b3b40;min-height:60vh}
+.sleep b{font-family:var(--display);font-size:2.2rem;font-weight:400;color:#3a4d53}
+.verdict{border-radius:14px;padding:18px;text-align:center;font-family:var(--display);font-size:1.5rem;border:1px solid var(--line)}
+.verdict.w{background:rgba(224,97,63,.18);border-color:var(--ember)}
+.verdict.v{background:rgba(133,184,144,.15);border-color:var(--moss)}
+.log{max-height:36vh;overflow:auto;font-size:.95rem;display:grid;gap:4px;color:var(--mute)}
+.caption{font-size:.95rem;color:var(--mute);text-align:center;min-height:1.5em}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--ember);color:#1a0b06;font-weight:700;padding:12px 18px;border-radius:12px;z-index:9;max-width:90vw}
+.fade{animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.fade,.pulse:after{animation:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<svg class="forest" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true"><path fill="#0d1a20" d="M0 90V60l20-30 20 30-8 0 22-34 22 34-8 0 20-26 20 26h-8l24-38 24 38h-10l22-30 22 30h-8l20-34 20 34H300l24-40 24 40h-9l22-28 22 28h-8l20-36 20 36h-10l24-32 24 32h-8l22-38 22 38H560l22-30 22 30h-8l20-34 20 34h-10l24-40 24 40h-8l22-30 22 30h-10l20-36 20 36h-8l24-32 24 32H850l22-34 22 34h-8l22-38 22 38h-9l20-30 20 30h-10l24-34 24 34h-8l22-30 22 30h-10l20-36 20 36h-8l24-32 24 32V90z"/></svg>
+<script>
+(() => {
+'use strict';
+/* ───────── ข้อมูลบทบาท ───────── */
+const ROLES = {
+  villager:{n:'ชาวบ้าน',d:'ไม่มีพลังพิเศษ ใช้การสังเกตและการโหวตเพื่อหาหมาป่า',s:'ไม่มีพลังพิเศษ'},
+  wolf:{n:'หมาป่า',d:'ทุกคืนตื่นมาเลือกฆ่าชาวบ้านร่วมกับพวก ชนะเมื่อหมาป่ามีจำนวนเท่ากับหรือมากกว่าคนที่เหลือ',s:'ฆ่าชาวบ้านทุกคืน'},
+  seer:{n:'หมอดู',d:'ทุกคืนเลือกตรวจ 1 คน เพื่อรู้ว่าเป็นหมาป่าหรือไม่',s:'ตรวจหมาป่าทุกคืน'},
+  doctor:{n:'หมอ',d:'ทุกคืนเลือกช่วย 1 คนจากการถูกหมาป่าฆ่า ช่วยคนเดิมติดกันสองคืนไม่ได้ ช่วยตัวเองได้',s:'ช่วยชีวิต 1 คนต่อคืน'},
+  hunter:{n:'นักล่า',d:'เมื่อตาย ไม่ว่าด้วยสาเหตุใด ยิงคนอื่นให้ตายตามได้ 1 คน',s:'ตายแล้วยิงตามได้'},
+  witch:{n:'แม่มด',d:'มียาชุบชีวิต 1 ขวด และยาพิษ 1 ขวด ใช้ได้อย่างละครั้งตลอดเกม',s:'ยาช่วย 1 ยาพิษ 1'},
+  cupid:{n:'คิวปิด',d:'คืนแรกเลือกคู่รัก 2 คน ถ้าคนหนึ่งตาย อีกคนตายตาม ถ้าคู่รักอยู่คนละฝ่ายและเหลือกันสองคน คู่รักชนะ',s:'จับคู่รักคืนแรก'},
+  bodyguard:{n:'บอดี้การ์ด',d:'ทุกคืนปกป้อง 1 คน ถ้าคนนั้นถูกหมาป่าโจมตี บอดี้การ์ดจะตายแทน ปกป้องคนเดิมติดกันไม่ได้',s:'ตายแทนคนที่ปกป้อง'},
+  tanner:{n:'คนบ้า',d:'ชนะคนเดียวถ้าถูกชาวบ้านโหวตออกจากหมู่บ้าน ดังนั้นต้องทำตัวให้น่าสงสัย',s:'อยากถูกโหวตออก'},
+};
+const SPECIALS = ['seer','doctor','hunter','witch','cupid','bodyguard','tanner'];
+const ICON = {
+  villager:'<path d="M4 12 12 5l8 7v8H4z"/><path d="M10 20v-5h4v5"/>',
+  wolf:'<path d="M5 4l4 4h6l4-4v9c0 4-3 7-7 7s-7-3-7-7z"/><path d="M9 13h.01M15 13h.01M10.5 17l1.5 1 1.5-1"/>',
+  seer:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  doctor:'<path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/>',
+  hunter:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
+  witch:'<path d="M9 3h6M10 3v5l-5 10a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-10V3"/><path d="M8 15h8"/>',
+  cupid:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>',
+  bodyguard:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  tanner:'<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8 15c2 2 6 2 8-1"/>',
+  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  vote:'<path d="M5 11l7-7 7 7M5 20h14M12 4v12"/>',
+};
+const ic = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]||''}</svg>`;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $app = document.getElementById('app');
+const LS = { get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}} };
+
+/* ───────── เครือข่าย ───────── */
+let ws = null, mode = null, V = null, offset = 0, hello = null, errMsg = '', retry = 0, closed = false;
+const send = o => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); };
+function connect(first) {
+  closed = false;
+  ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
+  ws.onopen = () => {
+    retry = 0;
+    if (first) return first();
+    const h = LS.get('ww_host'), p = LS.get('ww_player');
+    if (mode === 'host' && h) send({ t: 'hostResume', code: h.code, token: h.token });
+    else if (mode === 'player' && p) send({ t: 'join', code: p.code, token: p.token });
+  };
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.t === 'hello') { hello = m; if (m.role === 'host') LS.set('ww_host', { code: m.code, token: m.token }); else LS.set('ww_player', { code: m.code, token: m.token }); errMsg = ''; }
+    else if (m.t === 'state') { offset = m.now - Date.now(); const k = JSON.stringify(m, (a, b) => a === 'now' ? undefined : b); if (k === (V && V._k)) return; m._k = k; V = m; onState(); }
+    else if (m.t === 'error') { errMsg = m.msg; toast(m.msg); if (!V) renderLanding(); }
+    else if (m.t === 'gone') { LS.del('ww_host'); mode = null; V = null; renderLanding(); }
+    else if (m.t === 'kicked') { LS.del('ww_player'); mode = null; V = null; toast('ผู้คุมเกมนำคุณออกจากห้อง'); renderLanding(); }
+  };
+  ws.onclose = () => { if (closed) return; setTimeout(() => { if (mode) connect(); }, Math.min(4000, 400 + retry++ * 500)); };
+}
+function toast(t) { const d = document.createElement('div'); d.className = 'toast fade'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200); }
+const now = () => Date.now() + offset;
+
+/* ───────── เสียง ───────── */
+let AC = null, voices = [], voiceName = LS.get('ww_voice') || '', rate = LS.get('ww_rate') || 0.95, soundOn = true;
+function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
+function tone(f1, f2, dur, type = 'sine', vol = .12, delay = 0) {
+  const a = ac(); if (!a || !soundOn) return; const t = a.currentTime + delay;
+  const o = a.createOscillator(), g = a.createGain(), fl = a.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 1400;
+  o.type = type; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .25); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(fl); fl.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + .05);
+}
+const FX = {
+  howl(){ tone(260, 560, 1.4, 'sawtooth', .1); tone(560, 330, 1.6, 'sawtooth', .09, 1.3); tone(264, 568, 1.4, 'triangle', .07); },
+  night(){ tone(110, 80, 2.2, 'sine', .14); tone(165, 120, 2.2, 'sine', .06); },
+  wake(){ tone(440, 660, .5, 'triangle', .08); },
+  sleep(){ tone(520, 300, .6, 'triangle', .07); },
+  dawn(){ [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 1.4, 'sine', .09, i * .22)); },
+  drum(){ for (let i = 0; i < 3; i++) tone(120, 60, .35, 'sine', .25, i * .5); },
+  shot(){ tone(900, 60, .35, 'sawtooth', .18); },
+  dead(){ tone(220, 90, 1.1, 'triangle', .14); },
+};
+function loadVoices() { voices = (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^th/i.test(v.lang)); }
+if (window.speechSynthesis) { loadVoices(); speechSynthesis.onvoiceschanged = () => { loadVoices(); }; }
+function speak(text, done) {
+  let finished = false; const fin = () => { if (!finished) { finished = true; done && done(); } };
+  const est = Math.min(16000, 1400 + text.length * 110);
+  if (!soundOn || !window.speechSynthesis || !voices.length) return setTimeout(fin, est * .8);
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'th-TH'; u.rate = rate; u.pitch = .92;
+    const v = voices.find(x => x.name === voiceName) || voices[0]; if (v) u.voice = v;
+    u.onend = fin; u.onerror = fin; speechSynthesis.speak(u);
+    setTimeout(fin, est + 8000);
+  } catch (e) { setTimeout(fin, est); }
+}
+let lastSay = 0;
+function narrate() {
+  const s = V && V.say; if (!s || s.id === lastSay) return; lastSay = s.id;
+  if (s.fx && FX[s.fx]) FX[s.fx]();
+  const delay = s.fx === 'howl' || s.fx === 'dawn' ? 1200 : (s.fx ? 500 : 0);
+  setTimeout(() => speak(s.text, () => send({ t: 'sayDone', id: s.id })), delay);
+}
+
+/* ───────── ตัวช่วย UI ───────── */
+let timerEls = [];
+function fmt(ms) { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+setInterval(() => document.querySelectorAll('[data-end]').forEach(el => { const e = +el.dataset.end; if (e) el.textContent = fmt(e - now()); }), 250);
+const timerHtml = (cls = 'timer') => V.endsAt ? `<div class="${cls}" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</div>` : '';
+function mix(settings, n) {
+  const p = Math.max(n, 4), spec = SPECIALS.filter(k => settings.specials[k]);
+  return { wolves: settings.wolves, spec, vil: Math.max(0, p - settings.wolves - spec.length) };
+}
+let sel = [], selKey = '', ui = { voice: false };
+function setSel(k) { if (k !== selKey) { selKey = k; sel = []; } }
+
+/* ───────── หน้าแรก ───────── */
+function renderLanding() {
+  mode = null; closed = true; try { ws && ws.close(); } catch (e) {}
+  const c = new URLSearchParams(location.search).get('c') || '';
+  const h = LS.get('ww_host'), p = LS.get('ww_player');
+  $app.innerHTML = `<div class="narrow hero fade">
+    <div class="moon"></div><h1>ค่ำคืนหมาป่า</h1><p>เกมมนุษย์หมาป่าที่เล่นต่อหน้ากัน<br>ไอแพดกลางเป็นผู้คุมเกม โทรศัพท์ของทุกคนเป็นบัตรบทบาทลับ</p>
+    <div class="card stack" style="text-align:left">
+      <div class="lbl">เข้าร่วมเกมของเพื่อน</div>
+      <input id="jc" class="field" inputmode="numeric" maxlength="4" placeholder="รหัสห้อง 4 หลัก" value="${esc(c)}">
+      <input id="jn" class="field" maxlength="14" placeholder="ชื่อของคุณ" autocomplete="off">
+      <button class="btn primary block" id="jb">เข้าห้อง</button>
+      ${p ? `<button class="btn ghost block" id="jr">กลับเข้าห้อง ${esc(p.code)} ที่เล่นค้างไว้</button>` : ''}
+    </div>
+    <div class="divider">หรือ</div>
+    <div class="stack">
+      <button class="btn block" id="hb">สร้างห้องใหม่ (ใช้ไอแพดเป็นผู้คุมเกม)</button>
+      ${h ? `<button class="btn ghost block" id="hr">กลับไปห้องผู้คุมเกม ${esc(h.code)}</button>` : ''}
+    </div>
+    ${errMsg ? `<p class="err">${esc(errMsg)}</p>` : ''}
+  </div>`;
+  if (c) document.getElementById('jn').focus();
+  document.getElementById('jb').onclick = () => {
+    const code = document.getElementById('jc').value.trim(), name = document.getElementById('jn').value.trim();
+    if (!/^\d{4}$/.test(code)) return toast('ใส่รหัสห้อง 4 หลัก');
+    if (!name) return toast('ใส่ชื่อของคุณ');
+    mode = 'player'; LS.del('ww_player'); connect(() => send({ t: 'join', code, name }));
+  };
+  document.getElementById('hb').onclick = () => { ac(); mode = 'host'; LS.del('ww_host'); connect(() => send({ t: 'create' })); };
+  const jr = document.getElementById('jr'); if (jr) jr.onclick = () => { mode = 'player'; connect(); };
+  const hr = document.getElementById('hr'); if (hr) hr.onclick = () => { ac(); mode = 'host'; connect(); };
+}
+
+function onState() {
+  if (V.who !== mode) return;
+  if (mode === 'host') { narrate(); renderHost(); } else { renderPlayer(); }
+  keepAwake();
+}
+let wl = null;
+async function keepAwake() { try { if (!wl && navigator.wakeLock) { wl = await navigator.wakeLock.request('screen'); wl.onrelease = () => { wl = null; }; } } catch (e) {} }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') keepAwake(); });
+
+/* ───────── ผู้คุมเกม (ไอแพด) ───────── */
+const WIN = { village: 'ชาวบ้านชนะ', wolves: 'หมาป่าชนะ', lovers: 'คู่รักชนะ', tanner: 'คนบ้าชนะ' };
+function topbar() {
+  return `<div class="top"><div class="row"><span class="chip">${ic('moon')} ห้อง ${esc(V.code)}</span><span class="chip">${V.players.filter(p => p.alive).length}/${V.players.length} คนยังอยู่</span></div>
+    <div class="row"><button class="btn small ghost" id="snd">${soundOn ? 'เสียงเปิด' : 'เสียงปิด'}</button>${V.phase !== 'lobby' ? '<button class="btn small ghost" id="cls">ปิดเกม</button>' : ''}</div></div>`;
+}
+function bindTop() {
+  const s = document.getElementById('snd'); if (s) s.onclick = () => { soundOn = !soundOn; if (!soundOn && window.speechSynthesis) speechSynthesis.cancel(); renderHost(); };
+  const c = document.getElementById('cls'); if (c) c.onclick = () => { if (c.dataset.s) { send({ t: 'closeGame' }); } else { c.dataset.s = 1; c.textContent = 'กดอีกครั้งเพื่อยืนยัน'; setTimeout(() => { c.dataset.s = ''; c.textContent = 'ปิดเกม'; }, 3000); } };
+}
+function renderHost() {
+  const ph = V.phase, fn = { lobby: hostLobby, reveal: hostReveal, night: hostNight, dawn: hostDay, discuss: hostDiscuss, vote: hostVote, point: hostPoint,
+    voteResult: hostResult, lynch: hostDay, hunter: hostHunter, ended: hostEnd }[ph] || hostDay;
+  fn();
+}
+function pgrid(pickable) {
+  return `<div class="pgrid">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'} ${pickable && p.alive ? 'pick' : ''}" ${pickable && p.alive ? `data-id="${p.id}" role="button" tabindex="0"` : ''}><span class="dot ${p.conn ? '' : 'off'}"></span><span class="n">${esc(p.name)}</span>${p.role && !p.alive ? `<span class="r">${esc(ROLES[p.role].n)}</span>` : ''}</div>`).join('')}</div>`;
+}
+function hostLobby() {
+  const s = V.settings, n = V.players.length, m = mix(s, n), url = location.origin + '/?c=' + V.code, locked = s.auto;
+  const mixChips = `<span class="chip wolf">${ic('wolf')} หมาป่า ${m.wolves}</span>` + m.spec.map(k => `<span class="chip">${ic(k)} ${ROLES[k].n}</span>`).join('') + `<span class="chip">${ic('villager')} ชาวบ้าน ${m.vil}</span>`;
+  $app.innerHTML = `<div class="wrap stack fade">${topbar()}
+  <div class="lobbygrid">
+   <div class="stack">
+    <div class="card"><div class="row" style="gap:18px;flex-wrap:nowrap"><div class="grow"><div class="lbl">รหัสห้อง</div><div class="code">${esc(V.code)}</div><p class="muted" style="margin:8px 0 0;word-break:break-all">เปิด ${esc(location.host)} ในโทรศัพท์ แล้วใส่รหัส หรือสแกน QR</p></div><div class="qr" id="qr"></div></div></div>
+    <div class="card stack"><div class="row" style="justify-content:space-between"><div class="lbl">ผู้เล่นในห้อง (${n}/${V.max})</div><span class="muted">ขั้นต่ำ ${V.min} คน</span></div>
+      ${n ? `<div class="plist">${V.players.map(p => `<div class="pl"><span class="dot ${p.conn ? '' : 'off'}"></span><span class="n">${esc(p.name)}</span><button class="x" data-kick="${p.id}" aria-label="เชิญ ${esc(p.name)} ออก">✕</button></div>`).join('')}</div>` : '<p class="muted" style="margin:0">รอเพื่อนเข้าห้อง ชื่อจะปรากฏที่นี่</p>'}
+    </div>
+   </div>
+   <div class="stack">
+    <div class="card stack"><div class="lbl">บทบาทที่จะใช้</div>
+      <button class="tog ${s.auto ? 'on' : ''}" id="auto"><span>${ic('wolf')}</span><span><div class="t">จัดให้อัตโนมัติ</div><div class="d">ระบบเลือกจำนวนหมาป่าและบทบาทให้เหมาะกับจำนวนผู้เล่น</div></span><span class="sw"></span></button>
+      <div class="row" style="justify-content:space-between"><div><div class="t" style="font-weight:600">จำนวนหมาป่า</div><div class="muted" style="font-size:.85rem">ต้องน้อยกว่าครึ่งของผู้เล่น</div></div>
+        <div class="step"><button data-w="-1" ${locked ? 'disabled' : ''}>−</button><b>${s.wolves}</b><button data-w="1" ${locked ? 'disabled' : ''}>+</button></div></div>
+      <div class="stack" style="gap:8px">${SPECIALS.map(k => `<button class="tog ${s.specials[k] ? 'on' : ''}" data-sp="${k}" ${locked ? 'disabled' : ''}><span>${ic(k)}</span><span><div class="t">${ROLES[k].n}</div><div class="d">${ROLES[k].s}</div></span><span class="sw"></span></button>`).join('')}</div>
+      <div class="mix">${mixChips}</div>
+    </div>
+    <div class="card stack"><div class="lbl">กติกา</div>
+      <div><div class="t" style="font-weight:600;margin-bottom:6px">เมื่อมีคนตาย</div><div class="seg" id="rv"><button data-v="1" class="${s.revealOnDeath ? 'on' : ''}">เปิดเผยบทบาท</button><button data-v="0" class="${!s.revealOnDeath ? 'on' : ''}">ไม่เปิดเผย</button></div></div>
+      <div><div class="t" style="font-weight:600;margin-bottom:6px">การโหวตตอนกลางวัน</div><div class="seg" id="vm"><button data-v="secret" class="${s.voteMode === 'secret' ? 'on' : ''}">โหวตลับบนมือถือ</button><button data-v="point" class="${s.voteMode === 'point' ? 'on' : ''}">นับสามแล้วชี้</button></div></div>
+      <div><div class="t" style="font-weight:600;margin-bottom:6px">เวลาอภิปราย</div><div class="seg" id="ds">${[[60, '1 นาที'], [120, '2 นาที'], [180, '3 นาที'], [300, '5 นาที']].map(([v, l]) => `<button data-v="${v}" class="${s.discussSec === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+      <div><div class="t" style="font-weight:600;margin-bottom:6px">เวลาตัดสินใจตอนกลางคืน</div><div class="seg" id="as">${[[30, '30 วิ'], [45, '45 วิ'], [60, '60 วิ']].map(([v, l]) => `<button data-v="${v}" class="${s.actionSec === v ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    </div>
+    <div class="card stack"><div class="row" style="justify-content:space-between"><div class="lbl">เสียงบรรยาย</div><button class="btn small ghost" id="vtog">${ui.voice ? 'ซ่อน' : 'ตั้งค่า'}</button></div>
+      <div class="row"><button class="btn small" id="vtest">ทดสอบเสียงพูด</button><span class="muted" id="vinfo">${voices.length ? 'พบเสียงภาษาไทย ' + voices.length + ' เสียง' : 'ยังไม่พบเสียงภาษาไทยในเครื่องนี้ จะแสดงข้อความแทนเสียง'}</span></div>
+      ${ui.voice ? `<div class="stack" style="gap:10px">${voices.length > 1 ? `<select id="vsel" class="field">${voices.map(v => `<option ${v.name === (voiceName || voices[0].name) ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select>` : ''}
+        <label class="muted">ความเร็วพูด <input id="vrate" type="range" min="0.7" max="1.25" step="0.05" value="${rate}" style="width:100%"></label></div>` : ''}
+    </div>
+    ${V.msg ? `<p class="err" style="margin:0">${esc(V.msg)}</p>` : ''}
+    <button class="btn primary block" id="go" style="min-height:64px;font-size:1.2rem" ${n < V.min ? 'disabled' : ''}>${n < V.min ? 'ต้องมีผู้เล่นอย่างน้อย ' + V.min + ' คน' : 'เริ่มเกม'}</button>
+   </div>
+  </div></div>`;
+  bindTop(); drawQR(url);
+  $app.querySelectorAll('[data-kick]').forEach(b => b.onclick = () => send({ t: 'kick', id: b.dataset.kick }));
+  document.getElementById('auto').onclick = () => send({ t: 'settings', settings: { auto: !s.auto } });
+  $app.querySelectorAll('[data-w]').forEach(b => b.onclick = () => send({ t: 'settings', settings: { auto: false, wolves: s.wolves + +b.dataset.w } }));
+  $app.querySelectorAll('[data-sp]').forEach(b => b.onclick = () => send({ t: 'settings', settings: { auto: false, specials: { [b.dataset.sp]: !s.specials[b.dataset.sp] } } }));
+  $app.querySelectorAll('#rv button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { revealOnDeath: b.dataset.v === '1' } }));
+  $app.querySelectorAll('#vm button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { voteMode: b.dataset.v } }));
+  $app.querySelectorAll('#ds button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { discussSec: +b.dataset.v } }));
+  $app.querySelectorAll('#as button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { actionSec: +b.dataset.v } }));
+  document.getElementById('go').onclick = () => { ac(); if (window.speechSynthesis) { try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) {} } send({ t: 'start' }); };
+  document.getElementById('vtog').onclick = () => { ui.voice = !ui.voice; hostLobby(); };
+  document.getElementById('vtest').onclick = () => { ac(); loadVoices(); FX.howl(); speak('ทดสอบเสียง หมาป่าลืมตา เลือกเหยื่อที่จะฆ่า'); };
+  const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { voiceName = vs.value; LS.set('ww_voice', voiceName); };
+  const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { rate = +vr.value; LS.set('ww_rate', rate); };
+}
+let qrLib = null;
+function drawQR(url) {
+  const box = document.getElementById('qr'); if (!box) return;
+  const make = () => { try { const q = window.qrcode(0, 'M'); q.addData(url); q.make(); box.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); } catch (e) { box.textContent = V.code; } };
+  if (window.qrcode) return make();
+  if (!qrLib) { qrLib = new Promise(res => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.onload = res; s.onerror = res; document.head.appendChild(s); }); }
+  qrLib.then(() => { if (window.qrcode) make(); else box.textContent = 'QR'; });
+}
+function stageHtml(inner, cls = '') { return `<div class="wrap"><div class="stage ${cls}">${topbar()}<div class="center fade">${inner}</div><div>${pgrid(false)}</div></div></div>`; }
+function hostReveal() {
+  const r = V.players.filter(p => p.ready).length;
+  $app.innerHTML = stageHtml(`<h2 class="big">ดูบทบาทของตัวเองบนโทรศัพท์</h2><p class="sub">กดค้างเพื่อดูบทบาท แล้วกดรับทราบ อย่าให้คนอื่นเห็น</p>
+    <div class="bar"><i style="width:${r / V.players.length * 100}%"></i></div><div class="muted">พร้อมแล้ว ${r} จาก ${V.players.length} คน</div>
+    <button class="btn" id="sk">เริ่มกลางคืนเลย</button>`, 'night');
+  bindTop(); document.getElementById('sk').onclick = () => send({ t: 'skip' });
+}
+function hostNight() {
+  const st = V.step, wolf = st && st.key === 'wolves', open = st && st.stage === 'act';
+  const iconKey = st ? (st.key === 'lovers' ? 'cupid' : st.key === 'wolves' ? 'wolf' : st.key) : 'moon';
+  $app.innerHTML = stageHtml(`${open ? `<div class="pulse ${wolf ? 'wolf' : ''}">${ic(iconKey)}</div><div class="chip ${wolf ? 'wolf' : ''}">${esc(st.label)}กำลังลืมตา</div>` : `<div class="pulse" style="opacity:.5">${ic('moon')}</div>`}
+    <h2 class="big">${esc(V.say ? V.say.text : 'กลางคืน')}</h2>${open && V.endsAt ? `<div class="muted">เหลือเวลา <span data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span></div>` : ''}`, 'night');
+  bindTop();
+}
+function hostDay() {
+  $app.innerHTML = stageHtml(`<div class="pulse" style="background:radial-gradient(circle at 35% 35%,#fff3cf,#e3bd62 75%);box-shadow:0 0 90px rgba(227,189,98,.45)">${ic('sun')}</div><h2 class="big">${esc(V.say ? V.say.text : '')}</h2>`, 'dawn');
+  bindTop();
+}
+function hostDiscuss() {
+  $app.innerHTML = stageHtml(`<div class="lbl">เวลาอภิปราย</div>${timerHtml()}<p class="sub">${esc(V.say ? V.say.text : '')}</p><button class="btn" id="sk">ข้ามไปโหวต</button>`, 'dawn');
+  bindTop(); document.getElementById('sk').onclick = () => send({ t: 'skip' });
+}
+function hostVote() {
+  $app.innerHTML = stageHtml(`<div class="lbl">โหวตลับ</div><h2 class="big">ทุกคนโหวตบนโทรศัพท์</h2>${timerHtml('timer')}
+    <div class="bar"><i style="width:${V.voted / Math.max(1, V.aliveCount) * 100}%"></i></div><div class="muted">โหวตแล้ว ${V.voted} จาก ${V.aliveCount} คน</div><button class="btn" id="sk">สรุปผลทันที</button>`);
+  bindTop(); document.getElementById('sk').onclick = () => send({ t: 'finishVote' });
+}
+function hostPoint() {
+  $app.innerHTML = `<div class="wrap"><div class="stage">${topbar()}<div class="center fade"><h2 class="big">หนึ่ง สอง สาม ชี้!</h2><p class="sub">ทุกคนชี้คนที่สงสัยพร้อมกัน แล้วเลือกคนที่ถูกชี้มากที่สุดด้านล่าง</p></div>
+    <div class="stack"><div class="lbl">ใครถูกชี้มากที่สุด</div>${pgrid(true)}<button class="btn block" id="none">เสมอ ไม่มีใครออก</button></div></div></div>`;
+  bindTop(); $app.querySelectorAll('.pick').forEach(el => el.onclick = () => send({ t: 'pointResult', target: el.dataset.id }));
+  document.getElementById('none').onclick = () => send({ t: 'pointResult', target: null });
+}
+function hostResult() {
+  const t = V.tally || { counts: {}, voters: {}, skipped: [] }, ids = Object.keys(t.counts).sort((a, b) => t.counts[b] - t.counts[a]), mx = Math.max(1, ...Object.values(t.counts));
+  const nm = id => (V.players.find(p => p.id === id) || {}).name || '?';
+  $app.innerHTML = stageHtml(`<div class="lbl">ผลโหวต</div>${ids.map(id => `<div class="tallyrow"><b>${esc(nm(id))}</b><div class="tb"><i style="width:${t.counts[id] / mx * 100}%"></i></div><span>${t.counts[id]}</span></div><div class="muted" style="width:min(640px,92vw);text-align:left;margin-top:-10px">${esc((t.voters[id] || []).join(', '))}</div>`).join('') || '<p class="sub">ไม่มีใครถูกโหวต</p>'}
+    <h2 class="big">${esc(V.say ? V.say.text.replace(/^ผลโหวต.*?คะแนน /, '') : '')}</h2>`);
+  bindTop();
+}
+function hostHunter() {
+  $app.innerHTML = stageHtml(`<div class="pulse wolf">${ic('hunter')}</div><h2 class="big">${esc(V.say ? V.say.text : '')}</h2>${timerHtml('timer')}`, 'night');
+  bindTop();
+}
+function hostEnd() {
+  const rl = Object.fromEntries((V.roles || []).map(r => [r.id, r]));
+  $app.innerHTML = `<div class="wrap stack fade">${topbar()}<div class="center"><div class="lbl">จบเกม</div><h1 class="win">${esc(WIN[V.winner] || '')}</h1>
+    <div class="pgrid" style="width:100%;max-width:900px">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span><span class="chip ${p.role === 'wolf' ? 'wolf' : ''}">${ic(p.role)} ${esc(ROLES[p.role].n)}</span></div>`).join('')}</div>
+    <div class="row"><button class="btn primary" id="ag">เล่นอีกครั้ง</button></div></div></div>`;
+  bindTop(); document.getElementById('ag').onclick = () => send({ t: 'again' });
+}
+
+/* ───────── ผู้เล่น (มือถือ) ───────── */
+let peek = false, lastActKey = '';
+function myRoleCard(hidden) {
+  const r = V.me.role; if (!r) return '';
+  if (hidden) return `<div class="rolecard hidden"><div style="font-size:1.2rem;font-weight:600">กดค้างเพื่อดูบทบาท</div><div>ปล่อยนิ้วเพื่อซ่อน</div></div>`;
+  const extra = [];
+  if (V.me.mates && V.me.mates.length) extra.push(`<div class="chip wolf">พวกหมาป่า: ${V.me.mates.map(m => esc(m.name)).join(', ')}</div>`);
+  if (V.me.lover) extra.push(`<div class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} คู่รักของคุณคือ ${esc(V.me.lover)}</div>`);
+  return `<div class="rolecard ${r === 'wolf' ? 'wolf' : ''}">${ic(r)}<h2>${esc(ROLES[r].n)}</h2><div style="max-width:30ch">${esc(ROLES[r].d)}</div>${extra.join('')}</div>`;
+}
+function bindHold(id, fn) {
+  const b = document.getElementById(id); if (!b) return;
+  const on = e => { e.preventDefault(); peek = true; fn(); }, off = () => { if (peek) { peek = false; fn(); } };
+  b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off); b.addEventListener('contextmenu', e => e.preventDefault());
+}
+function renderPlayer() {
+  const me = V.me, ph = V.phase, a = V.act;
+  const key = ph + '|' + (a ? a.kind : '') + '|' + V.night + '|' + (V.hunterId || '');
+  if (key !== lastActKey) { lastActKey = key; if (a && navigator.vibrate && ['night', 'hunter'].includes(ph)) navigator.vibrate([250, 120, 250]); setSel(key); }
+  const head = `<div class="row" style="justify-content:space-between"><span class="chip">${ic(me.alive ? 'moon' : 'villager')} ${esc(me.name)}</span><span class="chip">ห้อง ${esc(V.code)}</span></div>`;
+  let body = '', foot = '', cls = '';
+  if (ph === 'lobby') {
+    body = `<div class="center"><h2 class="big" style="font-size:2rem">เข้าห้องแล้ว</h2><p class="sub">รอผู้คุมเกมกดเริ่ม คุณจะได้เห็นบทบาททางโทรศัพท์เครื่องนี้</p></div><div class="plist">${V.players.map(p => `<div class="pl"><span class="dot ${p.conn ? '' : 'off'}"></span><span class="n">${esc(p.name)}</span></div>`).join('')}</div>`;
+    foot = `<button class="btn ghost block" id="lv">ออกจากห้อง</button>`;
+  } else if (ph === 'reveal') {
+    body = `<div class="stack"><div class="lbl" style="text-align:center">บทบาทของคุณ</div><div id="rc">${myRoleCard(!peek)}</div></div>`;
+    foot = `<button class="btn primary block" id="rdy" ${me.ready ? 'disabled' : ''}>${me.ready ? 'รับทราบแล้ว รอคนอื่น' : 'รับทราบ'}</button>`;
+  } else if (ph === 'ended') {
+    const w = V.winner, mine = me.role === 'wolf' ? 'wolves' : (me.role === 'tanner' ? 'tanner' : 'village');
+    const won = w === mine || (w === 'lovers' && me.lover);
+    body = `<div class="verdict ${won ? 'v' : 'w'}">${esc(WIN[w] || '')}<div style="font-family:var(--body);font-size:1rem;margin-top:6px">${won ? 'ยินดีด้วย ฝั่งของคุณชนะ' : 'เกมนี้ฝั่งของคุณแพ้'}</div></div>
+      <div class="pgrid" style="grid-template-columns:1fr 1fr">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span><span class="r">${esc(ROLES[p.role] ? ROLES[p.role].n : '')}</span></div>`).join('')}</div>`;
+    foot = `<p class="caption">รอผู้คุมเกมเริ่มรอบใหม่</p>`;
+  } else if (a && a.kind === 'hunter') {
+    setSel(key);
+    body = `<div class="stack"><h2 style="font-size:1.8rem;text-align:center">เลือกคนที่จะยิง</h2>${opts(a.options, 1, true)}</div>`;
+    foot = `<button class="btn ember block" id="ok" ${sel.length ? '' : 'disabled'}>ยิง</button>`;
+  } else if (!me.alive) {
+    cls = '';
+    body = `<div class="stack"><div class="verdict">คุณออกจากเกมแล้ว<div style="font-family:var(--body);font-size:1rem;margin-top:4px">ดูเกมต่อได้ แต่ห้ามพูดบอกใบ้</div></div>
+      <div class="lbl">บทบาททุกคน</div><div class="pgrid" style="grid-template-columns:1fr 1fr">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span><span class="r">${p.role ? esc(ROLES[p.role].n) : ''}</span></div>`).join('')}</div>
+      <div class="lbl">เหตุการณ์ที่ผ่านมา</div><div class="log">${((V.spectate && V.spectate.log) || []).map(l => `<div>${esc(l)}</div>`).join('') || '<div>ยังไม่มี</div>'}</div></div>`;
+    foot = `<p class="caption">${esc(V.say ? V.say.text : '')}</p>`;
+  } else if (ph === 'night') {
+    if (a) { body = actUI(a); foot = actFoot(a); }
+    else { cls = 'sleepy'; body = `<div class="sleep"><b>หลับตา</b><div>ก้มหน้า ปิดตา และเงียบเสียง</div></div>`; }
+  } else if (ph === 'vote' && a) {
+    body = `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.7rem">โหวตออก</h2>${V.endsAt ? `<span class="chip" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span>` : ''}</div><div class="muted">เลือกคนที่คุณสงสัย แตะซ้ำเพื่อเปลี่ยนใจได้จนกว่าจะหมดเวลา</div>
+      <div class="opts">${a.options.map(o => `<button class="opt bad ${a.mine === o.id ? 'sel' : ''}" data-vote="${o.id}">${esc(o.name)}</button>`).join('')}<button class="opt ${a.mine === 'skip' ? 'sel' : ''}" data-vote="skip">งดออกเสียง</button></div></div>`;
+    foot = `<p class="caption">โหวตแล้ว ${a.count} จาก ${a.total} คน</p>`;
+  } else {
+    const say = V.say ? V.say.text : '';
+    const title = { dawn: 'รุ่งสาง', discuss: 'อภิปราย', vote: 'โหวต', point: 'ชี้ตัว', voteResult: 'ผลโหวต', lynch: 'ผลโหวต', hunter: 'นักล่า', night: 'กลางคืน' }[ph] || '';
+    let extra = '';
+    if (ph === 'point') extra = `<div class="verdict w">นับสาม แล้วชี้พร้อมกัน</div>`;
+    if (ph === 'voteResult' && V.tally) { const t = V.tally, nm = id => (V.players.find(p => p.id === id) || {}).name; extra = `<div class="stack">${Object.keys(t.counts).sort((x, y) => t.counts[y] - t.counts[x]).map(id => `<div class="pt"><span class="n">${esc(nm(id))}</span><b>${t.counts[id]}</b></div>`).join('')}</div>`; }
+    body = `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.7rem">${title}</h2>${V.endsAt && ph === 'discuss' ? `<span class="chip" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span>` : ''}</div>
+      ${extra}<div class="pgrid" style="grid-template-columns:1fr 1fr">${V.players.map(p => `<div class="pt ${p.alive ? '' : 'dead'}"><span class="n">${esc(p.name)}</span>${p.role && !p.alive ? `<span class="r">${esc(ROLES[p.role].n)}</span>` : ''}</div>`).join('')}</div></div>`;
+    foot = `<div class="stack" style="gap:10px"><p class="caption">${esc(say)}</p><button class="btn ghost block" id="pk">กดค้างเพื่อดูบทบาทของคุณ</button><div id="rc">${peek ? myRoleCard(false) : ''}</div></div>`;
+  }
+  $app.innerHTML = `<div class="phone ${cls}" ${cls ? 'style="background:#000"' : ''}>${cls ? '<div></div>' : head}<div class="fade">${body}</div><div>${foot}</div></div>`;
+  if (cls) document.body.style.background = '#000'; else document.body.style.background = '';
+  bindPlayer(a);
+}
+function opts(list, max, bad) {
+  return `<div class="opts">${list.map(o => `<button class="opt ${bad ? 'bad' : ''} ${sel.includes(o.id) ? 'sel' : ''}" data-pick="${o.id}" data-max="${max}">${esc(o.name)}</button>`).join('')}</div>`;
+}
+function actUI(a) {
+  if (a.done && a.kind !== 'seer') return `<div class="sleep"><b>เรียบร้อย</b><div>รอจนกว่าจะถึงเวลาหลับตา</div></div>`;
+  switch (a.kind) {
+    case 'cupid': return `<div class="stack"><h2 style="font-size:1.7rem">เลือกคู่รัก 2 คน</h2><div class="muted">ถ้าคนหนึ่งตาย อีกคนจะตายตาม</div>${opts(a.options, 2)}</div>`;
+    case 'bodyguard': return `<div class="stack"><h2 style="font-size:1.7rem">ปกป้องใคร</h2><div class="muted">ถ้าเขาถูกหมาป่าโจมตี คุณจะตายแทน ${a.last ? `(คืนก่อนปกป้อง ${esc(a.last)} ไปแล้ว)` : ''}</div>${opts(a.options, 1)}</div>`;
+    case 'doctor': return `<div class="stack"><h2 style="font-size:1.7rem">ช่วยชีวิตใคร</h2><div class="muted">ช่วยตัวเองได้ ${a.last ? `(คืนก่อนช่วย ${esc(a.last)} ไปแล้ว)` : ''}</div>${opts(a.options, 1)}</div>`;
+    case 'seer': return a.result ? `<div class="stack"><div class="verdict ${a.result.wolf ? 'w' : 'v'}">${esc(a.result.name)}<div style="font-family:var(--body);font-size:1.1rem;margin-top:6px">${a.result.wolf ? 'เป็นหมาป่า' : 'ไม่ใช่หมาป่า'}</div></div></div>` : `<div class="stack"><h2 style="font-size:1.7rem">ตรวจใคร</h2>${opts(a.options, 1)}</div>`;
+    case 'wolves': {
+      const names = Object.fromEntries(a.mates.map(m => [m.id, m.name]));
+      const cnt = {}; Object.entries(a.picks).forEach(([w, t]) => (cnt[t] = cnt[t] || []).push(names[w] || '?'));
+      return `<div class="stack"><h2 style="font-size:1.7rem">เลือกเหยื่อ</h2><div class="muted">พวกคุณ: ${a.mates.map(m => esc(m.name)).join(', ')} ต้องเลือกคนเดียวกัน</div>
+        <div class="opts">${a.options.map(o => `<button class="opt bad ${a.picks[V.me.id] === o.id ? 'sel' : ''}" data-wolf="${o.id}"><span>${esc(o.name)}</span><small>${esc((cnt[o.id] || []).join(', '))}</small></button>`).join('')}</div></div>`;
+    }
+    case 'witch': {
+      return `<div class="stack"><h2 style="font-size:1.7rem">แม่มด</h2>
+        ${a.victim ? `<div class="verdict w">คืนนี้ ${esc(a.victim.name)} ถูกหมาป่าทำร้าย</div>` : '<div class="verdict">คืนนี้ยังไม่มีใครถูกทำร้าย</div>'}
+        ${a.victim && a.potion.heal ? `<button class="opt ${sel.includes('save') ? 'sel' : ''}" data-tog="save"><span>ใช้ยาชุบชีวิตช่วย ${esc(a.victim.name)}</span></button>` : (a.victim ? '<div class="muted">ยาชุบชีวิตหมดแล้ว</div>' : '')}
+        ${a.potion.poison ? `<div class="lbl">ยาพิษ (ไม่บังคับ)</div><div class="opts">${a.options.map(o => `<button class="opt bad ${sel.includes('p:' + o.id) ? 'sel' : ''}" data-tog="p:${o.id}">${esc(o.name)}</button>`).join('')}</div>` : '<div class="muted">ยาพิษหมดแล้ว</div>'}</div>`;
+    }
+    case 'lovers': return `<div class="verdict" style="border-color:#e58aa8">คู่รักของคุณคือ<div style="font-size:2.2rem;margin-top:6px">${esc(a.partner)}</div></div><p class="sub" style="margin:14px auto;text-align:center">มองหน้ากันให้จำได้ แล้วหลับตา</p>`;
+  }
+  return '';
+}
+function actFoot(a) {
+  if (a.kind === 'wolves' || a.kind === 'lovers' || (a.done && a.kind !== 'seer')) return '';
+  if (a.kind === 'seer') return a.result ? `<button class="btn primary block" id="ack">รับทราบ หลับตา</button>` : `<button class="btn primary block" id="ok" ${sel.length ? '' : 'disabled'}>ตรวจ</button>`;
+  if (a.kind === 'witch') return `<button class="btn primary block" id="ok">${sel.length ? 'ยืนยัน' : 'ไม่ใช้อะไร หลับตา'}</button>`;
+  const need = a.kind === 'cupid' ? 2 : 1;
+  return `<button class="btn primary block" id="ok" ${sel.length === need ? '' : 'disabled'}>ยืนยัน</button>`;
+}
+function bindPlayer(a) {
+  const q = s => $app.querySelector(s), qa = s => $app.querySelectorAll(s);
+  const lv = q('#lv'); if (lv) lv.onclick = () => { send({ t: 'leave' }); LS.del('ww_player'); mode = null; V = null; renderLanding(); };
+  const rd = q('#rdy'); if (rd) rd.onclick = () => send({ t: 'ready' });
+  bindHold('pk', () => { const rc = document.getElementById('rc'); if (rc) rc.innerHTML = peek ? myRoleCard(false) : ''; });
+  if (V.phase === 'reveal') bindHold('rc', () => { const rc = document.getElementById('rc'); rc.innerHTML = myRoleCard(!peek); });
+  qa('[data-pick]').forEach(b => b.onclick = () => {
+    const id = b.dataset.pick, max = +b.dataset.max;
+    if (sel.includes(id)) sel = sel.filter(x => x !== id); else { sel.push(id); if (sel.length > max) sel.shift(); }
+    renderPlayer();
+  });
+  qa('[data-wolf]').forEach(b => b.onclick = () => { sel = [b.dataset.wolf]; send({ t: 'act', target: b.dataset.wolf }); renderPlayer(); });
+  qa('[data-tog]').forEach(b => b.onclick = () => {
+    const k = b.dataset.tog;
+    if (k === 'save') sel = sel.includes('save') ? sel.filter(x => x !== 'save') : sel.concat('save');
+    else { const had = sel.includes(k); sel = sel.filter(x => !x.startsWith('p:')); if (!had) sel.push(k); }
+    renderPlayer();
+  });
+  qa('[data-vote]').forEach(b => b.onclick = () => send({ t: 'vote', target: b.dataset.vote }));
+  const ok = q('#ok'); if (ok) ok.onclick = () => {
+    if (!a) return; const k = a.kind;
+    if (k === 'hunter') send({ t: 'shoot', target: sel[0] });
+    else if (k === 'cupid') send({ t: 'act', targets: sel });
+    else if (k === 'witch') { const p = sel.find(x => x.startsWith('p:')); send({ t: 'act', save: sel.includes('save'), poison: p ? p.slice(2) : null }); }
+    else send({ t: 'act', target: sel[0] });
+  };
+  const ak = q('#ack'); if (ak) ak.onclick = () => send({ t: 'ack' });
+}
+
+/* ───────── เริ่มต้น ───────── */
+(function boot() {
+  const h = LS.get('ww_host'), p = LS.get('ww_player'), c = new URLSearchParams(location.search).get('c');
+  if (h && !c) { mode = 'host'; $app.innerHTML = '<div class="narrow hero"><div class="moon"></div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
+  else if (p && !c) { mode = 'player'; $app.innerHTML = '<div class="narrow hero"><div class="moon"></div><p>กำลังกลับเข้าห้อง…</p></div>'; connect(); setTimeout(() => { if (!V) { mode = null; renderLanding(); } }, 6000); }
+  else renderLanding();
+})();
+})();
+</script>
+</body>
+</html>
