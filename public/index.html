@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a1216'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='%23bcd6e2' opacity='.35'/%3E%3Cpath d='M4 4l7 7h10l7-7v14c0 6.5-5.5 10-12 10S4 24.500 4 18z' fill='%23ece6d3'/%3E%3Cpath d='M9 17l5 2.500M23 17l-5 2.500' stroke='%23e0613f' stroke-width='2.600' stroke-linecap='round'/%3E%3Cpath d='M13.500 23.500h5l-2.500 2.800z' fill='%230a1216'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Srisakdi:wght@400;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* แนวคิด: ฉากกลางคืนในป่า พื้นเข้มอมเขียว แสงจันทร์ซีด ตัวอักษรหัวข้อหนาแบบโปสเตอร์เก่า */
 :root{
@@ -417,6 +417,20 @@ input[type=range]{accent-color:var(--gold2)}
   .btn.tt>span{gap:.3em}
 }
 @media(max-width:360px){.top>.row:last-child .btn{font-size:.74rem;padding:0 4px}}
+
+/* ===== รอบปรับปรุง 6: ป่ายามค่ำคืน แสงจันทร์สีน้ำเงินอมเขียว / ฟอนต์ดุดัน ===== */
+:root{--ink:#06161c;--pine:#0e2831;--fog:#16363f;--line:#2b5762;--moon:#9fe3f0;--display:'Pirata One','Srisakdi','Chonburi',Georgia,serif}
+body{background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 800%22 preserveAspectRatio=%22xMidYMid slice%22%3E%3Cpath d=%22M330 800L358 640L338 650L364 540L344 550L370 440L396 550L376 540L402 650L382 640L410 800Z%22 fill=%22%23155a6a%22 opacity=%22.55%22/%3E%3Cpath d=%22M640 800L668 640L648 650L674 540L654 550L680 440L706 550L686 540L712 650L692 640L720 800Z%22 fill=%22%23155a6a%22 opacity=%22.55%22/%3E%3Cpath d=%22M800 800L828 640L808 650L834 540L814 550L840 440L866 550L846 540L872 650L852 640L880 800Z%22 fill=%22%23155a6a%22 opacity=%22.55%22/%3E%3Cpath d=%22M80 800L85.6 0H90.4L96 800Z%22 fill=%22%231a6a7c%22 opacity=%220.5%22/%3E%3Cpath d=%22M260 800L264.2 0H267.8L272 800Z%22 fill=%22%231a6a7c%22 opacity=%220.45%22/%3E%3Cpath d=%22M470 800L474.9 0H479.1L484 800Z%22 fill=%22%231a6a7c%22 opacity=%220.4%22/%3E%3Cpath d=%22M690 800L694.2 0H697.8L702 800Z%22 fill=%22%231a6a7c%22 opacity=%220.45%22/%3E%3Cpath d=%22M880 800L885.6 0H890.4L896 800Z%22 fill=%22%231a6a7c%22 opacity=%220.5%22/%3E%3Cpath d=%22M1090 800L1094.2 0H1097.8L1102 800Z%22 fill=%22%231a6a7c%22 opacity=%220.4%22/%3E%3Cpath d=%22M180 800L189.8 0H198.2L208 800Z%22 fill=%22%23093844%22 opacity=%220.7%22/%3E%3Cpath d=%22M560 800L568.4 0H575.6L584 800Z%22 fill=%22%23093844%22 opacity=%220.65%22/%3E%3Cpath d=%22M960 800L970.5 0H979.5L990 800Z%22 fill=%22%23093844%22 opacity=%220.7%22/%3E%3Cpath d=%22M-40 800L12.5 0H57.5L110 800Z%22 fill=%22%23030f14%22 opacity=%221%22/%3E%3Cpath d=%22M1050 800L1109.5 0H1160.5L1220 800Z%22 fill=%22%23030f14%22 opacity=%221%22/%3E%3Cg fill=%22none%22 stroke=%22%23030f14%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M70 300L220 200L300 210M80 480L240 380M90 150L200 70%22 stroke-width=%2212%22/%3E%3Cpath d=%22M1150 260L980 170L900 190M1130 450L960 340M1160 120L1040 60%22 stroke-width=%2214%22/%3E%3C/g%3E%3Cg fill=%22none%22 stroke=%22%23093844%22 stroke-linecap=%22round%22 opacity=%22.7%22%3E%3Cpath d=%22M200 330L330 260L420 280M580 240L700 170M980 380L870 300%22 stroke-width=%227%22/%3E%3C/g%3E%3C/svg%3E") center bottom/cover no-repeat,radial-gradient(760px 520px at 82% 6%,rgba(130,225,240,.30),transparent 62%),radial-gradient(900px 600px at 15% 105%,rgba(30,130,140,.28),transparent 62%),linear-gradient(180deg,#06171d,#0a2b34 55%,#04121a);background-attachment:fixed}
+body::after{content:"";position:fixed;left:-20%;right:-20%;bottom:0;height:45vh;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 100% at 30% 100%,rgba(150,225,235,.16),transparent 70%),radial-gradient(55% 90% at 75% 100%,rgba(150,225,235,.12),transparent 70%);animation:mist 18s ease-in-out infinite alternate}
+@keyframes mist{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+@media(prefers-reduced-motion:reduce){body::after{animation:none}}
+.forest{opacity:.8}.forest path{fill:#03111a}
+h1,h2,h3,.code,.timer,.big,.pkname,.win{font-family:var(--display);letter-spacing:.03em;text-shadow:0 2px 0 #000,0 0 22px rgba(120,220,235,.25)}
+.hero h1{font-size:clamp(3.4rem,12vw,6rem);color:#e6f6f4;text-shadow:0 3px 0 #000,0 0 34px rgba(120,225,240,.5),0 0 4px rgba(224,97,63,.6)}
+.cname b{font-family:var(--display);letter-spacing:.04em}
+.big{line-height:1.2}
+.card{background:linear-gradient(180deg,rgba(14,40,49,.88),rgba(8,24,31,.9))}
 </style>
 </head>
 <body>
@@ -434,6 +448,7 @@ input[type=range]{accent-color:var(--gold2)}
   <radialGradient id="wfMuz" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#fffaf0"/><stop offset=".7" stop-color="#e7dfcc"/><stop offset="1" stop-color="#b7b09f"/></radialGradient>
   <radialGradient id="wfEye" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#ffb02e"/><stop offset="1" stop-color="#a24f06"/></radialGradient>
   <radialGradient id="wfNose" cx=".4" cy=".25" r=".9"><stop offset="0" stop-color="#4a4c52"/><stop offset="1" stop-color="#050607"/></radialGradient>
+  <linearGradient id="wfMouth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0508"/><stop offset="1" stop-color="#6a1420"/></linearGradient>
   <filter id="wfSoft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
   <filter id="wfSoft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.6"/></filter>
   <filter id="wfRough" x="-8%" y="-8%" width="116%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".11" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/></filter>
@@ -575,10 +590,14 @@ function wolfHead(seed = 11) {
   <path d="M65 99Q76 94 88 100" fill="none" stroke="#fff3c4" stroke-opacity=".55" stroke-width="1"/><path d="M135 99Q124 94 112 100" fill="none" stroke="#fff3c4" stroke-opacity=".55" stroke-width="1"/>
   <path d="M88 130Q100 123 112 130Q111 144 100 150Q89 144 88 130Z" fill="url(#wfNose)" stroke="#050607" stroke-width="1.2" stroke-linejoin="round"/>
   <ellipse cx="100" cy="129.5" rx="6.5" ry="1.7" fill="#fff" opacity=".4"/><path d="M95 138Q97 140 96 142M105 138Q103 140 104 142" stroke="#000" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>
-  <path d="M100 150V158M100 158Q92 168 80 163M100 158Q108 168 120 163" fill="none" stroke="#14151a" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M91 173Q100 179 109 173" fill="none" stroke="#2a2d33" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+  <path d="M100 150V156" stroke="#14151a" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M78 160Q100 150 122 160Q118 190 100 192Q82 190 78 160Z" fill="url(#wfMouth)" stroke="#14151a" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M88 180Q100 172 112 180Q108 190 100 190Q92 190 88 180Z" fill="#c4505e" opacity=".9"/>
+  <path d="M86 162L90 177L95 162Z M114 162L110 177L105 162Z M100 160L103 168L97 168Z" fill="#fffdf4" stroke="#bbb4a2" stroke-width=".6" stroke-linejoin="round"/>
+  <path d="M87 187L90 177L93 188Z M113 187L110 177L107 188Z" fill="#f4efe0" stroke="#bbb4a2" stroke-width=".6" stroke-linejoin="round"/>
+  <path d="M91 128l-7-7M95 125l-5-9M109 125l5-9M113 128l7-7" stroke="#2a2d33" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+  <path d="M56 90L92 104M144 90L108 104" stroke="#08090b" stroke-width="4.5" stroke-linecap="round" opacity=".9"/>
   <g fill="#23262b" opacity=".5"><circle cx="86" cy="150" r="1.2"/><circle cx="80" cy="146" r="1.2"/><circle cx="84" cy="156" r="1.2"/><circle cx="114" cy="150" r="1.2"/><circle cx="120" cy="146" r="1.2"/><circle cx="116" cy="156" r="1.2"/></g>
-  <path d="M82 163L85 170L88 164Z M118 163L115 170L112 164Z" fill="#fffdf4" stroke="#bbb4a2" stroke-width=".6" stroke-linejoin="round"/>
   <path d="M60 60C52 70 46 84 44 100" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="3" stroke-linecap="round"/><path d="M140 60C148 70 154 84 156 100" fill="none" stroke="#fff" stroke-opacity=".1" stroke-width="3" stroke-linecap="round"/>
   </g>`;
 }
