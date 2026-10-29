@@ -508,6 +508,19 @@ button,.btn,.opt,.seg button,.tog,.chip,.lbl,.pl,.seat,.tallyrow,.skiprow,.toast
 /* ข้อความอ่านยาว ช่องกรอก = Sarabun เพื่ออ่านสบาย */
 body,.field,input,p{font-family:var(--body)}
 .field::placeholder{font-family:var(--body)}
+
+/* ===== รอบปรับปรุง 11: หน้าต่างดูบทบาททั้งหมด ===== */
+#rolesModal{position:fixed;inset:0;z-index:80;overflow:auto;-webkit-overflow-scrolling:touch;background:rgba(3,8,11,.92);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  padding:0 max(16px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:fade .2s both}
+#rolesModal .rm-in{max-width:1180px;margin:0 auto;display:grid;gap:14px}
+.rm-head{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:max(14px,env(safe-area-inset-top,0px)) 0 12px;background:linear-gradient(180deg,rgba(3,8,11,.98) 70%,transparent)}
+.rm-head h2{font-size:1.8rem}
+.rm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px}
+.rm-item{display:grid;grid-template-columns:clamp(96px,30%,140px) minmax(0,1fr);gap:14px;align-items:start;padding:12px;border-radius:14px;border:1px solid rgba(201,153,63,.32);background:linear-gradient(180deg,rgba(14,40,49,.88),rgba(8,24,31,.9))}
+.rm-card{position:relative;width:100%;aspect-ratio:200/280;border-radius:7%/5%;overflow:hidden;container-type:inline-size;isolation:isolate;box-shadow:0 8px 22px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.6)}
+.rm-info{display:grid;gap:8px;min-width:0;align-content:start}
+.rm-info p{margin:0;font-size:.95rem;color:var(--bone)}
+@media(prefers-reduced-motion:reduce){#rolesModal{animation:none}}
 </style>
 </head>
 <body>
@@ -540,6 +553,11 @@ body,.field,input,p{font-family:var(--body)}
   <radialGradient id="cbgGuard" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#3a5e86"/><stop offset=".6" stop-color="#17304a"/><stop offset="1" stop-color="#070f18"/></radialGradient>
   <radialGradient id="cbgLycan" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#3f6a70"/><stop offset=".6" stop-color="#1a3238"/><stop offset="1" stop-color="#071114"/></radialGradient>
   <radialGradient id="cbgTan" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#6a2a3e"/><stop offset=".6" stop-color="#2e1426"/><stop offset="1" stop-color="#10070e"/></radialGradient>
+  <radialGradient id="cbgSpell" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#2a6a58"/><stop offset=".6" stop-color="#2a1a4a"/><stop offset="1" stop-color="#0a0714"/></radialGradient>
+  <radialGradient id="cbgMayor" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#7a5a22"/><stop offset=".6" stop-color="#3a2a12"/><stop offset="1" stop-color="#120c05"/></radialGradient>
+  <radialGradient id="cbgMason" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#4a5a6a"/><stop offset=".6" stop-color="#1e2a36"/><stop offset="1" stop-color="#080c12"/></radialGradient>
+  <radialGradient id="cbgMinion" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#5a1a22"/><stop offset=".6" stop-color="#24090e"/><stop offset="1" stop-color="#0c0305"/></radialGradient>
+  <radialGradient id="cbgTough" cx=".5" cy=".35" r=".9"><stop offset="0" stop-color="#6a4a3a"/><stop offset=".6" stop-color="#2e2018"/><stop offset="1" stop-color="#0e0906"/></radialGradient>
   <clipPath id="artclip"><rect x="26" y="32" width="148" height="172" rx="8"/></clipPath>
   <linearGradient id="artShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".25" stop-color="#fff" stop-opacity="0"/><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient>
   <!-- สีที่ใช้วาดภาพบนการ์ด -->
@@ -587,8 +605,13 @@ const ROLES = {
   bodyguard:{n:'บอดี้การ์ด',t:'ฝ่ายชาวบ้าน',d:'ทุกคืนเลือกปกป้องคนอื่น 1 คน ถ้าคนนั้นถูกหมาป่าโจมตีจะรอด ปกป้องตัวเองไม่ได้ และปกป้องคนเดิมติดกันสองคืนไม่ได้',s:'ปกป้องคนอื่นคืนละ 1 คน'},
   lycan:{n:'ลูกครึ่งหมาป่า',t:'ฝ่ายชาวบ้าน',d:'เป็นชาวบ้านที่มีเลือดหมาป่าอยู่ในตัว ไม่มีพลังพิเศษตอนกลางคืน แต่ถ้าเซียตรวจจะเห็นว่า “ไม่ดี” ชนะร่วมกับชาวบ้านเมื่อหมาป่าถูกกำจัดหมด',s:'เซียตรวจเจอว่า “ไม่ดี”'},
   tanner:{n:'คนบ้า',t:'ฝ่ายอิสระ',d:'ชนะคนเดียวถ้าถูกชาวบ้านโหวตออกจากหมู่บ้าน ดังนั้นต้องทำตัวให้น่าสงสัย',s:'อยากถูกโหวตออก'},
+  spellcaster:{n:'หมอผี',t:'ฝ่ายชาวบ้าน',d:'ทุกคืนเลือกสะกดผู้เล่น 1 คนให้พูดไม่ได้ตลอดการอภิปรายของวันถัดไป ผู้คุมเกมจะประกาศชื่อคนที่ถูกสะกด สะกดตัวเองไม่ได้ และเลือกคนเดิมติดกันสองคืนไม่ได้',s:'สะกดให้ใบ้ 1 คนต่อคืน'},
+  mayor:{n:'ผู้ใหญ่บ้าน',t:'ฝ่ายชาวบ้าน',d:'ไม่มีพลังตอนกลางคืน แต่คะแนนโหวตตอนกลางวันของคุณนับเป็น 2 เสียง (ถ้าเล่นแบบนับสามแล้วชี้ ให้นับที่คุณชี้เป็น 2 คะแนน)',s:'โหวตนับเป็น 2 เสียง'},
+  mason:{n:'ช่างก่อสร้าง',t:'ฝ่ายชาวบ้าน',d:'มี 2 คนเสมอ คืนแรกจะลืมตามาเห็นหน้ากัน จึงรู้ว่าอีกคนเป็นฝ่ายชาวบ้านแน่นอน ไม่มีพลังตอนกลางคืน',s:'มี 2 คน รู้ตัวกันคืนแรก'},
+  minion:{n:'ลูกสมุน',t:'ฝ่ายหมาป่า',d:'อยู่ฝั่งหมาป่า คืนแรกจะรู้ว่าใครเป็นหมาป่า แต่หมาป่าไม่รู้ว่าคุณคือใคร เซียตรวจคุณจะเห็นว่า “ดี” ชนะเมื่อหมาป่าชนะ แต่ถ้าหมาป่าถูกกำจัดหมด ชาวบ้านชนะทันที แม้คุณจะยังอยู่',s:'รู้ว่าใครคือหมาป่า'},
+  tough:{n:'คนแกร่ง',t:'ฝ่ายชาวบ้าน',d:'ถูกหมาป่าโจมตีครั้งแรกจะไม่ตาย (ทุกคนจะเห็นเหมือนไม่มีใครตาย) แต่จะบาดเจ็บและตายตอนรุ่งสางของคืนถัดไป',s:'ทนหมาป่ากัดได้ 1 ครั้ง'},
 };
-const SPECIALS = ['seer','hunter','witch','cupid','bodyguard','tanner','lycan'];
+const SPECIALS = ['seer','hunter','witch','cupid','bodyguard','tanner','lycan','spellcaster','mayor','mason','minion','tough'];
 const ICON = {
   villager:'<path d="M3.5 12.5 12 5l8.5 7.5"/><path d="M5.5 11v9h13v-9"/><path d="M10 20v-5.5h4V20"/><path d="M16.5 7.5V4.5h2v5"/>',
   wolf:'<path d="M4 3l5 4.2h6L20 3v10.2c0 3-2 5.2-4.2 6.3L12 22l-3.8-2.5C6 18.4 4 16.2 4 13.2z"/><path d="M6.6 6.4l1.6 2.2M17.4 6.4l-1.6 2.2"/><path d="M7.8 11.4l3 1.1M16.2 11.4l-3 1.1"/><path d="M10.6 17.2h2.8l-1.4 1.6z"/><path d="M12 18.8v1.6"/>',
@@ -599,6 +622,11 @@ const ICON = {
   bodyguard:'<path d="M12 2.8l8 2.9v6.3c0 5-3.4 8.2-8 9.2-4.6-1-8-4.2-8-9.2V5.7z"/><path d="M12 7v9M8.2 11h7.6"/>',
   tanner:'<path d="M3 16 5 6.5l4.5 5L12 4l2.5 7.5 4.5-5L21 16z"/><path d="M3 16h18v3.2H3z"/><circle cx="5" cy="5.4" r=".9"/><circle cx="12" cy="3" r=".9"/><circle cx="19" cy="5.4" r=".9"/>',
   lycan:'<circle cx="12" cy="13.5" r="6.3"/><path d="M12 7.2v12.6"/><path d="M14.6 8.4l3.4-4.9 1.4 6"/><path d="M8.4 12.4h1.8"/><path d="M13.8 12.4h1.8"/><path d="M13 16.6h2.6l-1.3 1.4z"/>',
+  spellcaster:'<path d="M5 6c0-1.7 3-3 7-3s7 1.3 7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9z"/><path d="M8.2 10.2l2.2 1M15.8 10.2l-2.2 1"/><path d="M8.5 16h7M10 14.4v3.2M12 14.4v3.2M14 14.4v3.2"/>',
+  mayor:'<circle cx="12" cy="14.5" r="6.5"/><path d="M8.5 3l3.5 4.5L15.500 3"/><path d="M9.800 13.300a2.300 2.300 0 1 1 3.800 1.700L9.800 18h4.600"/>',
+  mason:'<path d="M12 3 6 20.500M12 3l6 17.500"/><path d="M4 13.500 12 21l8-7.500"/><path d="M9 14h6"/>',
+  minion:'<path d="M12 3c-4 0-7 3-7 7.500V21h14V10.500C19 6 16 3 12 3z"/><path d="M8.500 11c0 2.400 1.600 4 3.500 4s3.500-1.600 3.500-4"/><path d="M9.700 11.500h.01M14.300 11.500h.01"/>',
+  tough:'<path d="M12 2.800l8 2.900v6.300c0 5-3.400 8.200-8 9.200-4.600-1-8-4.200-8-9.200V5.700z"/><path d="M8 7.500l7 9M11 6.300l6 8M7 11.500l5 6.500"/>',
   sound:'<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/>',
   mute:'<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
   home:'<path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
@@ -807,8 +835,66 @@ const ART = {
     <circle cx="46" cy="48" r="6" fill="url(#gold)" stroke="#6a4a14"/><circle cx="100" cy="41" r="6" fill="url(#gold)" stroke="#6a4a14"/><circle cx="154" cy="48" r="6" fill="url(#gold)" stroke="#6a4a14"/>
     <path d="M56 116Q100 134 144 116L142 130Q100 148 58 130Z" fill="url(#gold)" stroke="#7a5a1f"/>
     ${star(40,170,3)}${star(162,168,4)}`,
+  spellcaster: `<circle cx="100" cy="118" r="68" fill="url(#hAura)"/>
+    <path d="M62 80Q48 54 58 34Q76 54 82 76Z" fill="url(#hViolet)" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M138 80Q152 54 142 34Q124 54 118 76Z" fill="url(#hViolet)" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M100 76Q86 52 100 30Q114 52 100 76Z" fill="url(#hGreen)" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M58 98Q58 72 100 70Q142 72 142 98V138Q142 176 100 192Q58 176 58 138Z" fill="url(#hWood)" stroke="url(#gold)" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M66 100Q100 88 134 100" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"/>
+    <path d="M70 114Q82 103 94 115Q82 124 70 114Z" fill="#06100a" stroke="${G}" stroke-width="1.6"/><path d="M106 115Q118 103 130 114Q118 124 106 115Z" fill="#06100a" stroke="${G}" stroke-width="1.6"/>
+    <circle cx="82" cy="114" r="4.4" fill="#7affb0"/><circle cx="118" cy="114" r="4.4" fill="#7affb0"/><circle cx="82" cy="114" r="11" fill="url(#hBrew)"/><circle cx="118" cy="114" r="11" fill="url(#hBrew)"/>
+    <path d="M100 82V104M92 90L100 82L108 90" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M70 134L84 142M130 134L116 142" stroke="#e0613f" stroke-width="3" stroke-linecap="round"/>
+    <path d="M78 158Q100 172 122 158" fill="none" stroke="#1a0f08" stroke-width="6" stroke-linecap="round"/>
+    <path d="M84 153V167M92 158V172M100 161V175M108 158V172M116 153V167" stroke="#e6dcff" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M38 92l7 10-7 10M162 92l-7 10 7 10" fill="none" stroke="#cdbfff" stroke-opacity=".8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M142 168h22a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6h-10l-7 7v-7h-5a6 6 0 0 1-6-6v-8a6 6 0 0 1 6-6z" fill="#1c1030" stroke="${G}" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M143 170l26 22" stroke="#e0613f" stroke-width="3.2" stroke-linecap="round"/>
+    ${star(44,60,5)}${star(158,64,3)}${star(46,168,3)}`,
+  mayor: `<circle cx="100" cy="116" r="68" fill="url(#hGlow)"/>
+    <g transform="rotate(-11 82 80)"><rect x="64" y="52" width="36" height="50" rx="3" fill="#f7efd8" stroke="${G}" stroke-width="1.6"/><path d="M72 74l6 6 11-13" fill="none" stroke="#2fbf68" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M71 90H93M71 96H86" stroke="#b9a87a" stroke-width="2" stroke-linecap="round"/></g>
+    <g transform="rotate(10 120 76)"><rect x="102" y="46" width="36" height="50" rx="3" fill="#f7efd8" stroke="${G}" stroke-width="1.6"/><path d="M110 68l6 6 11-13" fill="none" stroke="#2fbf68" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M109 84H131M109 90H124" stroke="#b9a87a" stroke-width="2" stroke-linecap="round"/></g>
+    <path d="M48 120H152L162 196H38Z" fill="url(#hWood)" stroke="url(#gold)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M52 134H148" stroke="rgba(0,0,0,.22)" stroke-width="1.4"/>
+    <rect x="70" y="111" width="60" height="12" rx="4" fill="#1a0f08" stroke="${G}" stroke-width="2"/>
+    <circle cx="100" cy="162" r="23" fill="url(#gold)" stroke="#6a4a14" stroke-width="2.4"/><circle cx="100" cy="162" r="17" fill="#2a1a08" stroke="#f6dc94" stroke-width="1.2"/>
+    <text x="100" y="171" text-anchor="middle" font-family="'Grenze Gotisch',Georgia,serif" font-size="25" font-weight="700" fill="#f6dc94">×2</text>
+    <path d="M30 196H170" stroke="${G}" stroke-width="1.6" stroke-linecap="round"/>
+    ${star(40,64,5)}${star(162,72,4)}${star(100,40,3)}`,
+  mason: `<circle cx="100" cy="116" r="68" fill="url(#hSteel)"/>
+    <rect x="42" y="48" width="116" height="150" rx="12" fill="url(#hShield)" stroke="url(#gold)" stroke-width="3.4"/>
+    <path d="M42 90H158M42 130H158M42 170H158M80 48V90M122 90V130M80 130V170M122 170V198" stroke="rgba(0,0,0,.3)" stroke-width="1.6"/>
+    <path d="M56 132L100 176L144 132" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linejoin="miter" stroke-linecap="square"/>
+    <path d="M66 142L72 136M80 156L86 150M114 150L120 156M128 136L134 142" stroke="#6a4a14" stroke-width="2" stroke-linecap="round"/>
+    <path d="M66 152L100 68L134 152" fill="none" stroke="#cfd8de" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M66 152L100 68L134 152" fill="none" stroke="#6b7a82" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M82 118H118" stroke="#cfd8de" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="68" r="8" fill="url(#gold)" stroke="#6a4a14" stroke-width="2"/>
+    <path d="M100 109L112 122L100 135L88 122Z" fill="url(#gold)" stroke="#6a4a14" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M100 109L88 122H112Z" fill="#fff" opacity=".35"/>
+    ${star(54,62,3)}${star(148,64,3)}${star(100,188,3)}`,
+  minion: `<circle cx="100" cy="112" r="68" fill="url(#hRose)"/>
+    <g transform="translate(46 32) scale(.54)" opacity=".4">${wolfHead(9)}</g>
+    <path d="M100 82Q62 88 56 134L40 204H160L144 134Q138 88 100 82Z" fill="#190f16" stroke="${G}" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M60 140L56 198M140 140L144 198M100 160V204" stroke="rgba(255,255,255,.1)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M100 82Q72 92 70 126Q70 150 100 158Q130 150 130 126Q128 92 100 82Z" fill="#040408" stroke="#4a2a22" stroke-width="1.4"/>
+    <ellipse cx="85" cy="124" rx="16" ry="10" fill="url(#hGlow)"/><ellipse cx="115" cy="124" rx="16" ry="10" fill="url(#hGlow)"/>
+    <path d="M75 124Q85 116 95 125Q85 131 75 124Z" fill="#ffb02e"/><path d="M125 124Q115 116 105 125Q115 131 125 124Z" fill="#ffb02e"/>
+    <ellipse cx="85" cy="124.5" rx="1.8" ry="3.6" fill="#1a0b00"/><ellipse cx="115" cy="124.5" rx="1.8" ry="3.6" fill="#1a0b00"/>
+    <path d="M84 168Q100 182 116 168" fill="none" stroke="${G}" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M95 172L100 196L105 172Z" fill="#fffdf4" stroke="#bbb4a2" stroke-width="1" stroke-linejoin="round"/>
+    ${star(40,60,4)}${star(160,72,3)}${star(44,150,2.6)}`,
+  tough: `<circle cx="100" cy="116" r="68" fill="url(#hSteel)"/>
+    <circle cx="100" cy="116" r="54" fill="url(#hShield)" stroke="url(#gold)" stroke-width="4"/>
+    <circle cx="100" cy="116" r="44" fill="none" stroke="${G}" stroke-opacity=".6" stroke-width="1.6"/>
+    <g fill="url(#gold)" stroke="#6a4a14" stroke-width="1"><circle cx="100" cy="68" r="3.6"/><circle cx="134" cy="82" r="3.6"/><circle cx="148" cy="116" r="3.6"/><circle cx="134" cy="150" r="3.6"/><circle cx="100" cy="164" r="3.6"/><circle cx="66" cy="150" r="3.6"/><circle cx="52" cy="116" r="3.6"/><circle cx="66" cy="82" r="3.6"/></g>
+    <g transform="rotate(-28 100 116)"><rect x="48" y="108" width="104" height="16" rx="3" fill="#efe3c4" stroke="#8a6a2c" stroke-width="1.4"/><path d="M92 108v16M108 108v16" stroke="#cdb98a" stroke-width="1.6"/></g>
+    <path d="M70 76L116 156M86 68L130 146M54 90L100 168" fill="none" stroke="#6a1209" stroke-width="7" stroke-linecap="round"/>
+    <path d="M70 76L116 156M86 68L130 146M54 90L100 168" fill="none" stroke="#ff8a68" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="100" cy="116" r="13" fill="url(#gold)" stroke="#6a4a14" stroke-width="2"/><circle cx="96" cy="112" r="4" fill="#fff" opacity=".5"/>
+    ${star(40,60,4)}${star(160,64,4)}${star(100,38,3)}`,
 };
-const THEME = { wolf: ['cbgW', 'goldW'], villager: ['cbgVil', 'gold'], seer: ['cbgSeer', 'gold'], hunter: ['cbgHunt', 'gold'], witch: ['cbgWitch', 'gold'], cupid: ['cbgCupid', 'gold'], bodyguard: ['cbgGuard', 'gold'], tanner: ['cbgTan', 'gold'], lycan: ['cbgLycan', 'gold'] };
+const THEME = { wolf: ['cbgW', 'goldW'], villager: ['cbgVil', 'gold'], seer: ['cbgSeer', 'gold'], hunter: ['cbgHunt', 'gold'], witch: ['cbgWitch', 'gold'], cupid: ['cbgCupid', 'gold'], bodyguard: ['cbgGuard', 'gold'], tanner: ['cbgTan', 'gold'], lycan: ['cbgLycan', 'gold'], spellcaster: ['cbgSpell', 'gold'], mayor: ['cbgMayor', 'gold'], mason: ['cbgMason', 'gold'], minion: ['cbgMinion', 'goldW'], tough: ['cbgTough', 'gold'] };
 function frame(role) {
   const t = THEME[role] || ['cbg', 'gold'], g = `url(#${t[1]})`, bg = `url(#${t[0]})`;
   return `<rect x="3" y="3" width="194" height="274" rx="14" fill="${bg}" stroke="${g}" stroke-width="3"/>
@@ -822,7 +908,7 @@ const frameEnd = `</g><rect x="26" y="32" width="148" height="172" rx="8" fill="
   <path d="M30 214H170L180 232 170 250H30L20 232Z" fill="#0b161b" stroke="url(#gold)" stroke-width="1.8"/>
   <path d="M38 218H162M38 246H162" stroke="${G}" stroke-width=".8" opacity=".55"/>`;
 function cardFace(role) {
-  const w = role === 'wolf', r = ROLES[role] || ROLES.villager;
+  const w = role === 'wolf' || role === 'minion', r = ROLES[role] || ROLES.villager;
   return `<svg class="cs" viewBox="0 0 200 280" aria-hidden="true">${frame(role)}${ART[role] || ''}${frameEnd}</svg><div class="shine"></div><div class="cname"><b${r.n.length > 9 ? ' style="font-size:clamp(8px,7.4cqw,30px)"' : ''}>${r.n}</b></div><div class="csub ${w ? 'wolf' : ''}">${r.t}</div>`;
 }
 const BACK = `<svg class="cs" viewBox="0 0 200 280" aria-hidden="true"><rect x="3" y="3" width="194" height="274" rx="14" fill="#0c1a21" stroke="url(#gold)" stroke-width="3"/>
@@ -945,14 +1031,15 @@ setInterval(() => document.querySelectorAll('[data-end]').forEach(el => { const 
 const timerHtml = (cls = 'timer') => V.endsAt ? `<div class="${cls}" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</div>` : '';
 function mix(settings, n) {
   const p = Math.max(n, 4), spec = SPECIALS.filter(k => settings.specials[k]);
-  return { wolves: settings.wolves, spec, vil: Math.max(0, p - settings.wolves - spec.length) };
+  const used = spec.reduce((a, k) => a + (k === 'mason' ? 2 : 1), 0); // ช่างก่อสร้างมี 2 คน
+  return { wolves: settings.wolves, spec, vil: Math.max(0, p - settings.wolves - used) };
 }
 let sel = [], selKey = '', ui = { voice: false };
 function setSel(k) { if (k !== selKey) { selKey = k; sel = []; } }
 
 /* ───────── หน้าแรก ───────── */
 function renderLanding() {
-  hideDock(); mode = null; closed = true; try { ws && ws.close(); } catch (e) {}
+  closeRoles(); hideDock(); mode = null; closed = true; try { ws && ws.close(); } catch (e) {}
   const c = new URLSearchParams(location.search).get('c') || '';
   const h = LS.get('ww_host'), p = LS.get('ww_player');
   $app.innerHTML = `<div class="narrow hero fade">
@@ -1012,7 +1099,23 @@ function twoTap(id, label, ask, fn) {
   b.onclick = () => { if (b.dataset.s) return fn(); b.dataset.s = 1; b.classList.add('ask'); setTimeout(() => { if (b.isConnected) { b.dataset.s = ''; b.classList.remove('ask'); } }, 3000); };
 }
 function goHome() { dealStop(); if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } V = null; renderLanding(); }
+/* ───────── หน้าต่างดูบทบาททั้งหมด (การ์ด + คำอธิบาย) ───────── */
+let rolesOpen = null;
+function rolesKey(e) { if (e.key === 'Escape') closeRoles(); }
+function closeRoles() { if (rolesOpen) { rolesOpen.remove(); rolesOpen = null; document.removeEventListener('keydown', rolesKey); } }
+function showRoles() {
+  closeRoles();
+  const sp = (V && V.settings && V.settings.specials) || {}, order = ['villager', 'wolf'].concat(SPECIALS);
+  const item = k => { const r = ROLES[k], wolf = r.t === 'ฝ่ายหมาป่า', on = k !== 'villager' && k !== 'wolf' && !!sp[k];
+    return `<div class="rm-item"><div class="rm-card">${cardFace(k)}</div><div class="rm-info"><div class="pkname">${esc(r.n)}${k === 'mason' ? ' ×2' : ''}</div>
+      <div class="row" style="gap:6px"><span class="chip ${wolf ? 'wolf' : ''}">${esc(r.t)}</span>${on ? '<span class="chip ok">เปิดใช้ในห้องนี้</span>' : ''}</div><p>${esc(r.d)}</p></div></div>`; };
+  const d = document.createElement('div'); d.id = 'rolesModal'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', 'บทบาททั้งหมด');
+  d.innerHTML = `<div class="rm-in"><div class="rm-head"><h2>บทบาททั้งหมด (${order.length})</h2><button class="btn small" id="rmx">${ic('check')} ปิด</button></div><div class="rm-grid">${order.map(item).join('')}</div></div>`;
+  d.addEventListener('click', e => { if (e.target === d) closeRoles(); });
+  document.body.appendChild(d); rolesOpen = d; d.querySelector('#rmx').onclick = closeRoles; document.addEventListener('keydown', rolesKey);
+}
 function renderHost() {
+  if (V.phase !== 'lobby') closeRoles();
   const ph = V.phase, fn = { lobby: hostLobby, reveal: hostReveal, night: hostNight, dawn: hostDay, discuss: hostDiscuss, vote: hostVote, point: hostPoint,
     voteResult: hostResult, lynch: hostDay, hunter: hostHunter, ended: hostEnd }[ph] || hostDay;
   fn();
@@ -1022,7 +1125,7 @@ function pgrid(pickable) {
 }
 function hostLobby() {
   const s = V.settings, n = V.players.length, m = mix(s, n), url = location.origin + '/?c=' + V.code, locked = s.auto;
-  const mixChips = `<span class="chip wolf">${ic('wolf')} หมาป่า ${m.wolves}</span>` + m.spec.map(k => `<span class="chip">${ic(k)} ${ROLES[k].n}</span>`).join('') + `<span class="chip">${ic('villager')} ชาวบ้าน ${m.vil}</span>`;
+  const mixChips = `<span class="chip wolf">${ic('wolf')} หมาป่า ${m.wolves}</span>` + m.spec.map(k => `<span class="chip ${ROLES[k].t === 'ฝ่ายหมาป่า' ? 'wolf' : ''}">${ic(k)} ${ROLES[k].n}${k === 'mason' ? ' ×2' : ''}</span>`).join('') + `<span class="chip">${ic('villager')} ชาวบ้าน ${m.vil}</span>`;
   $app.innerHTML = `<div class="wrap stack fade">${topbar()}
   <div class="lobbygrid">
    <div class="stack">
@@ -1032,7 +1135,7 @@ function hostLobby() {
     </div>
    </div>
    <div class="stack">
-    <div class="card stack"><div class="lbl">บทบาทที่จะใช้</div>
+    <div class="card stack"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div class="lbl">บทบาทที่จะใช้</div><button class="btn small ghost" id="allroles">${ic('seer')} ดูบทบาททั้งหมด</button></div>
       <button class="tog ${s.auto ? 'on' : ''}" id="auto"><span>${ic('wolf')}</span><span><div class="t">จัดให้อัตโนมัติ</div><div class="d">ระบบเลือกจำนวนหมาป่าและบทบาทให้เหมาะกับจำนวนผู้เล่น</div></span><span class="sw"></span></button>
       <div class="row" style="justify-content:space-between"><div><div class="t" style="font-weight:600">จำนวนหมาป่า</div><div class="muted" style="font-size:.85rem">ต้องน้อยกว่าครึ่งของผู้เล่น</div></div>
         <div class="step"><button data-w="-1" ${locked ? 'disabled' : ''}>−</button><b>${s.wolves}</b><button data-w="1" ${locked ? 'disabled' : ''}>+</button></div></div>
@@ -1059,6 +1162,7 @@ function hostLobby() {
   </div></div>`;
   bindTop(); drawQR(url);
   $app.querySelectorAll('[data-kick]').forEach(b => b.onclick = () => send({ t: 'kick', id: b.dataset.kick }));
+  document.getElementById('allroles').onclick = showRoles;
   document.getElementById('auto').onclick = () => send({ t: 'settings', settings: { auto: !s.auto } });
   $app.querySelectorAll('[data-w]').forEach(b => b.onclick = () => send({ t: 'settings', settings: { auto: false, wolves: s.wolves + +b.dataset.w } }));
   $app.querySelectorAll('[data-sp]').forEach(b => b.onclick = () => send({ t: 'settings', settings: { auto: false, specials: { [b.dataset.sp]: !s.specials[b.dataset.sp] } } }));
@@ -1138,7 +1242,7 @@ function hostReveal() {
 }
 function hostNight() {
   const st = V.step, wolf = st && st.key === 'wolves', open = st && st.stage === 'act';
-  const iconKey = st ? (st.key === 'lovers' ? 'cupid' : st.key === 'wolves' ? 'wolf' : st.key) : 'moon';
+  const iconKey = st ? (st.key === 'lovers' ? 'cupid' : st.key === 'masons' ? 'mason' : st.key === 'wolves' ? 'wolf' : st.key) : 'moon';
   $app.innerHTML = stageHtml(`${open ? `<div class="pulse ${wolf ? 'wolf' : ''}">${ic(iconKey)}</div><div class="chip ${wolf ? 'wolf' : ''}">${esc(st.label)}กำลังลืมตา</div>` : `<div class="pulse" style="opacity:.5">${ic('moon')}</div>`}
     <h2 class="big">${esc(V.say ? V.say.text : 'กลางคืน')}</h2>${open && V.endsAt ? `<div class="muted">เหลือเวลา <span data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span></div>` : ''}`, 'night');
   bindTop();
@@ -1148,7 +1252,7 @@ function hostDay() {
   bindTop();
 }
 function hostDiscuss() {
-  $app.innerHTML = stageHtml(`<div class="lbl">เวลาอภิปราย</div>${timerHtml()}<p class="sub">${esc(V.say ? V.say.text : '')}</p><button class="btn" id="sk">ข้ามไปโหวต</button>`, 'dawn');
+  $app.innerHTML = stageHtml(`<div class="lbl">เวลาอภิปราย</div>${timerHtml()}${V.muted ? `<div class="chip wolf">${ic('mute')} ${esc(V.muted)} ถูกสะกด พูดไม่ได้</div>` : ''}<p class="sub">${esc(V.say ? V.say.text : '')}</p><button class="btn" id="sk">ข้ามไปโหวต</button>`, 'dawn');
   bindTop(); document.getElementById('sk').onclick = () => send({ t: 'skip' });
 }
 function hostVote() {
@@ -1196,7 +1300,7 @@ function renderPlayer() {
     const seen = !!(deal && deal.ever);
     foot = `<button class="btn primary block" id="rdy" ${me.ready || !seen ? 'disabled' : ''}>${me.ready ? 'รับทราบแล้ว รอคนอื่น' : (seen ? 'รับทราบ' : 'แตะการ์ดเพื่อดูบทบาทก่อน')}</button>`;
   } else if (ph === 'ended') {
-    const w = V.winner, mine = me.role === 'wolf' ? 'wolves' : (me.role === 'tanner' ? 'tanner' : 'village');
+    const w = V.winner, mine = (me.role === 'wolf' || me.role === 'minion') ? 'wolves' : (me.role === 'tanner' ? 'tanner' : 'village');
     const won = w === mine || (w === 'lovers' && me.lover);
     body = `<div class="verdict ${won ? 'v' : 'w'}">${esc(WIN[w] || '')}<div style="font-family:var(--body);font-size:1rem;margin-top:6px">${won ? 'ยินดีด้วย ฝั่งของคุณชนะ' : 'เกมนี้ฝั่งของคุณแพ้'}</div></div>
       ${summaryHtml()}`;
@@ -1227,6 +1331,7 @@ function renderPlayer() {
     const say = V.say ? V.say.text : '';
     const title = { dawn: 'รุ่งสาง', discuss: 'อภิปราย', vote: 'โหวต', point: 'ชี้ตัว', voteResult: 'ผลโหวต', lynch: 'ผลโหวต', hunter: 'นายพราน', night: 'กลางคืน' }[ph] || '';
     let extra = '';
+    if (me.muted) extra += `<div class="verdict w">${ic('mute')} คุณถูกหมอผีสะกด<div style="font-family:var(--body);font-size:1rem;margin-top:4px">พูดไม่ได้ตลอดการอภิปรายนี้ (ทำท่าทางได้)</div></div>`;
     if (ph === 'point') extra = `<div class="verdict w">นับสาม แล้วชี้พร้อมกัน</div>`;
     if (ph === 'voteResult' && V.tally) { const t = V.tally, nm = id => (V.players.find(p => p.id === id) || {}).name; extra = `<div class="stack">${Object.keys(t.counts).sort((x, y) => t.counts[y] - t.counts[x]).map(id => `<div class="pt"><span class="n">${esc(nm(id))}</span><b>${t.counts[id]}</b></div>`).join('')}${t.skipped && t.skipped.length ? `<div class="skiprow" style="width:auto">${ic('flag')}<b>งดออกเสียง ${t.skipped.length} คน</b></div>` : ''}</div>`; }
     body = `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:1.7rem">${title}</h2>${V.endsAt && ph === 'discuss' ? `<span class="chip" data-end="${V.endsAt}">${fmt(V.endsAt - now())}</span>` : ''}</div>
@@ -1260,12 +1365,16 @@ function actUI(a) {
         ${a.victim && a.potion.heal ? `<button class="opt ${sel.includes('save') ? 'sel' : ''}" data-tog="save"><span>ใช้ยาชุบชีวิตช่วย ${esc(a.victim.name)}</span></button>` : (a.victim ? '<div class="muted">ยาชุบชีวิตหมดแล้ว</div>' : '')}
         ${a.potion.poison ? `<div class="lbl">ยาพิษ (ไม่บังคับ)</div><div class="opts">${a.options.map(o => `<button class="opt bad ${sel.includes('p:' + o.id) ? 'sel' : ''}" data-tog="p:${o.id}">${esc(o.name)}</button>`).join('')}</div>` : '<div class="muted">ยาพิษหมดแล้ว</div>'}</div>`;
     }
+    case 'spell': return `<div class="stack"><h2 style="font-size:1.7rem">สะกดใครให้ใบ้</h2><div class="muted">คนที่ถูกสะกดจะพูดไม่ได้ตลอดการอภิปรายของวันพรุ่งนี้ ${a.last ? `(คืนก่อนสะกด ${esc(a.last)} ไปแล้ว เลือกซ้ำไม่ได้)` : ''}</div>${opts(a.options, 1)}</div>`;
+    case 'minion': return `<div class="stack"><h2 style="font-size:1.7rem;text-align:center">หมาป่าคือ</h2>${a.wolves.map(n => `<div class="verdict w" style="font-size:1.8rem">${esc(n)}</div>`).join('')}<div class="muted" style="text-align:center">จำให้ดี หมาป่าไม่รู้ว่าคุณคือใคร</div></div>`;
+    case 'masons': return `<div class="verdict" style="border-color:var(--moss)">เพื่อนช่างก่อสร้างของคุณคือ<div style="font-size:2.2rem;margin-top:6px">${a.partners.map(esc).join(', ')}</div></div><p class="sub" style="margin:14px auto;text-align:center">มองหน้ากันให้จำได้ แล้วหลับตา</p>`;
     case 'lovers': return `<div class="verdict" style="border-color:#e58aa8">คู่รักของคุณคือ<div style="font-size:2.2rem;margin-top:6px">${esc(a.partner)}</div></div><p class="sub" style="margin:14px auto;text-align:center">มองหน้ากันให้จำได้ แล้วหลับตา</p>`;
   }
   return '';
 }
 function actFoot(a) {
-  if (a.kind === 'wolves' || a.kind === 'lovers' || (a.done && a.kind !== 'seer')) return '';
+  if (a.kind === 'wolves' || a.kind === 'lovers' || a.kind === 'masons' || (a.done && a.kind !== 'seer')) return '';
+  if (a.kind === 'minion') return `<button class="btn primary block" id="ack">รับทราบ หลับตา</button>`;
   if (a.kind === 'seer') return a.result ? `<button class="btn primary block" id="ack">รับทราบ หลับตา</button>` : `<button class="btn primary block" id="ok" ${sel.length ? '' : 'disabled'}>ตรวจ</button>`;
   if (a.kind === 'witch') return `<button class="btn primary block" id="ok">${sel.length ? 'ยืนยัน' : 'ไม่ใช้อะไร หลับตา'}</button>`;
   const need = a.kind === 'cupid' ? 2 : 1;
@@ -1402,7 +1511,7 @@ const pName = id => { const p = V.players.find(x => x.id === id); return p ? p.n
 const pRole = id => { const p = V.players.find(x => x.id === id); return p && ROLES[p.role] ? ROLES[p.role].n : ''; };
 const evWho = id => `<b>${esc(pName(id))}</b> <span class="muted">(${esc(pRole(id))})</span>`;
 function causeText(e) {
-  return { wolves: 'ถูกหมาป่ากัด', witch: 'ถูกแม่มดวางยา', hunter: 'ถูกนายพราน ' + pName(e.from) + ' ยิง', vote: 'ถูกโหวตออก', lover: 'ตายตามคู่รัก ' + pName(e.from) }[e.by] || 'ออกจากเกม';
+  return { wolves: 'ถูกหมาป่ากัด', witch: 'ถูกแม่มดวางยา', hunter: 'ถูกนายพราน ' + pName(e.from) + ' ยิง', vote: 'ถูกโหวตออก', lover: 'ตายตามคู่รัก ' + pName(e.from), wound: 'บาดแผลจากหมาป่ากำเริบ' }[e.by] || 'ออกจากเกม';
 }
 function story() {
   const rounds = [], fate = {}; let cur = null, night = 0;
@@ -1419,9 +1528,10 @@ function evRow(e) {
   switch (e.k) {
     case 'cupid': icon = 'cupid'; html = `คิวปิดจับคู่ ${evWho(e.a[0])} กับ ${evWho(e.a[1])}`; break;
     case 'guard': icon = 'bodyguard'; html = `บอดี้การ์ดปกป้อง ${evWho(e.t)}`; break;
+    case 'spell': icon = 'spellcaster'; html = `หมอผีสะกด ${evWho(e.t)} ให้พูดไม่ได้`; break;
     case 'seer': icon = 'seer'; html = `เซียตรวจ ${evWho(e.t)}<small>${e.wolf ? 'ไม่ดี' : 'ดี'}</small>`; break;
-    case 'saved': icon = 'wolf'; html = `หมาป่าเลือกกัด ${evWho(e.t)} แต่รอดมาได้<small>${e.by === 'witch' ? 'แม่มดใช้ยาชุบชีวิตช่วยไว้' : 'บอดี้การ์ดปกป้องไว้'}</small>`; break;
-    case 'kill': icon = { wolves: 'wolf', witch: 'witch', hunter: 'hunter', vote: 'vote', lover: 'cupid' }[e.by] || 'moon'; bad = true; html = `${evWho(e.t)}<small>${esc(causeText(e))}</small>`; break;
+    case 'saved': icon = 'wolf'; html = `หมาป่าเลือกกัด ${evWho(e.t)} แต่รอดมาได้<small>${e.by === 'witch' ? 'แม่มดใช้ยาชุบชีวิตช่วยไว้' : e.by === 'tough' ? 'คนแกร่งทนไว้ได้ แต่บาดเจ็บและจะตายคืนถัดไป' : 'บอดี้การ์ดปกป้องไว้'}</small>`; break;
+    case 'kill': icon = { wolves: 'wolf', witch: 'witch', hunter: 'hunter', vote: 'vote', lover: 'cupid', wound: 'tough' }[e.by] || 'moon'; bad = true; html = `${evWho(e.t)}<small>${esc(causeText(e))}</small>`; break;
     case 'vote': {
       icon = 'vote'; const ids = Object.keys(e.counts || {}).sort((a, b) => e.counts[b] - e.counts[a]);
       const tl = ids.map(id => `${esc(pName(id))} ${e.counts[id]} คะแนน${e.voters && e.voters[id] ? ' <span class="muted">(' + e.voters[id].map(esc).join(', ') + ')</span>' : ''}`).join(' · ');
@@ -1434,7 +1544,7 @@ function evRow(e) {
 function summaryHtml() {
   const { rounds, fate } = story(), cupid = (V.events || []).find(e => e.k === 'cupid');
   const rows = V.players.map(p => {
-    const f = fate[p.id], r = ROLES[p.role] || ROLES.villager, wolf = p.role === 'wolf';
+    const f = fate[p.id], r = ROLES[p.role] || ROLES.villager, wolf = p.role === 'wolf' || p.role === 'minion';
     const lover = cupid && cupid.a.includes(p.id) ? cupid.a.find(x => x !== p.id) : null;
     return `<div class="frow ${wolf ? 'w' : ''} ${p.alive ? '' : 'dead'}"><div class="fn"><b>${esc(p.name)}</b><span class="chip ${wolf ? 'wolf' : ''}">${ic(p.role)} ${esc(r.n)}</span>${lover ? `<span class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} ${esc(pName(lover))}</span>` : ''}</div>
       <div class="fd muted">${p.alive ? 'รอดชีวิตจนจบเกม' : f ? esc(f.when) + ' · ' + esc(causeText(f.e)) : 'ออกจากเกม'}</div></div>`;
@@ -1448,8 +1558,9 @@ const dockEl = document.getElementById('dock'), pcard = document.getElementById(
 pcard.querySelector('.back').innerHTML = BACK;
 let dockRole = null, peek = false;
 function infoHtml() {
-  const me = V.me, r = ROLES[me.role]; let x = `<div class="pkname">${esc(r.n)}</div><div class="pkteam ${me.role === 'wolf' ? 'wolf' : ''}">${esc(r.t)}</div><p>${esc(r.d)}</p>`;
+  const me = V.me, r = ROLES[me.role]; let x = `<div class="pkname">${esc(r.n)}</div><div class="pkteam ${me.role === 'wolf' || me.role === 'minion' ? 'wolf' : ''}">${esc(r.t)}</div><p>${esc(r.d)}</p>`;
   if (me.mates && me.mates.length) x += `<div class="chip wolf">พวกหมาป่า: ${me.mates.map(m => esc(m.name)).join(', ')}</div>`;
+  if (me.wolves && me.wolves.length) x += `<div class="chip wolf">หมาป่าคือ: ${me.wolves.map(esc).join(', ')}</div>`;
   if (me.lover) x += `<div class="chip" style="border-color:#e58aa8;color:#f2b3c8">${ic('cupid')} คู่รักของคุณคือ ${esc(me.lover)}</div>`;
   return x;
 }
