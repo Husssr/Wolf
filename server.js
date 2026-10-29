@@ -83,8 +83,11 @@ const ROLE = {
   cupid: { name: 'คิวปิด', team: 'village' },
   bodyguard: { name: 'บอดี้การ์ด', team: 'village' },
   tanner: { name: 'คนบ้า', team: 'village' },
+  lycan: { name: 'ลูกครึ่งหมาป่า', team: 'village' }, // ชนะร่วมกับชาวบ้าน แต่เซียตรวจเจอเป็น "ไม่ดี"
 };
-const SPECIALS = ['seer', 'hunter', 'witch', 'cupid', 'bodyguard', 'tanner'];
+const SPECIALS = ['seer', 'hunter', 'witch', 'cupid', 'bodyguard', 'tanner', 'lycan'];
+// บทบาทที่เซียตรวจแล้วขึ้นว่า "ไม่ดี" (หมาป่าจริง + ลูกครึ่งหมาป่าที่อยู่ฝั่งชาวบ้าน)
+const looksEvil = role => role === 'wolf' || role === 'lycan';
 const MIN_PLAYERS = 4, MAX_PLAYERS = 18;
 
 const rooms = new Map();
@@ -95,7 +98,7 @@ const uid = () => crypto.randomBytes(8).toString('hex');
 
 function suggest(n) {
   const wolves = Math.max(1, Math.floor(n / 4));
-  const sp = { seer: n >= 5, bodyguard: n >= 6, hunter: n >= 7, witch: n >= 8, cupid: n >= 9, tanner: n >= 11 };
+  const sp = { seer: n >= 5, bodyguard: n >= 6, hunter: n >= 7, witch: n >= 8, cupid: n >= 9, tanner: n >= 11, lycan: n >= 10 };
   return { wolves, specials: sp };
 }
 function defaultSettings() {
@@ -246,9 +249,9 @@ function actNight(r, p, m) {
   } else if (k === 'seer') {
     if (m.ack) { if (nt.seerRes) st.done[p.id] = 1; return; }
     if (!valid(m.target) || m.target === p.id || nt.seerRes) return;
-    const t = byId(r, m.target); nt.seerRes = { id: t.id, wolf: t.role === 'wolf' };
-    logAdd(r, 'เซียตรวจ ' + t.name + (t.role === 'wolf' ? ' (เป็นหมาป่า)' : ' (ไม่ใช่หมาป่า)'));
-    r.events.push({ k: 'seer', n: r.night, t: t.id, wolf: t.role === 'wolf' });
+    const t = byId(r, m.target); const evil = looksEvil(t.role); nt.seerRes = { id: t.id, wolf: evil }; // wolf = true หมายถึงผลตรวจ "ไม่ดี"
+    logAdd(r, 'เซียตรวจ ' + t.name + (evil ? ' (ไม่ดี)' : ' (ดี)'));
+    r.events.push({ k: 'seer', n: r.night, t: t.id, wolf: evil });
   } else if (k === 'wolves') {
     if (!valid(m.target) || byId(r, m.target).role === 'wolf') return;
     nt.picks[p.id] = m.target;
