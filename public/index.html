@@ -1027,15 +1027,31 @@ function speakCloud(text, gen, fin) {
       if (si < TTS_SRC.length) return load();
       moved = true; cloudOk = false; if (gen === speakGen) speakLocal(parts.slice(i - 1).join(' '), gen, fin);
     };
+    let tm = 0;
     const load = () => {
-      AU.onended = () => { ttsLog = 'เล่นเสียงสำเร็จ (' + TTS_NAME[si] + ')'; go(); };
-      AU.onerror = () => tryNext('โหลดไม่ได้');
+      clearTimeout(tm); tm = setTimeout(() => tryNext('เงียบเกิน 6 วินาที'), 6000);
+      AU.onplaying = () => { clearTimeout(tm); ttsLog = 'กำลังเล่นเสียง (' + TTS_NAME[si] + ')'; };
+      AU.onended = () => { clearTimeout(tm); ttsLog = 'เล่นเสียงสำเร็จ (' + TTS_NAME[si] + ')'; go(); };
+      AU.onerror = () => { clearTimeout(tm); tryNext('โหลดไม่ได้'); };
       AU.src = TTS_SRC[si](part); AU.playbackRate = VS.rate; AU.preservesPitch = true;
-      const pr = AU.play(); if (pr && pr.catch) pr.catch(e => tryNext(e && e.name));
+      const pr = AU.play(); if (pr && pr.catch) pr.catch(e => { clearTimeout(tm); tryNext(e && e.name); });
     };
     load();
   };
   next();
+}
+
+async function ttsDiag(el) {
+  const out = []; const show = () => { el.innerHTML = out.map(esc).join('<br>'); };
+  out.push('กำลังตรวจสอบ...'); show();
+  const direct = new Promise(res => {
+    const a = new Audio(); let d = 0; const end = m => { if (!d) { d = 1; res(m); } };
+    a.oncanplaythrough = () => end('ได้'); a.onerror = () => end('ไม่ได้ (' + (a.error ? 'code ' + a.error.code : 'error') + ')'); setTimeout(() => end('ไม่ตอบ (หมดเวลา)'), 7000);
+    a.src = TTS_SRC[0]('สวัสดี'); a.load();
+  });
+  const server = fetch('/tts?q=' + encodeURIComponent('สวัสดี')).then(r => r.ok ? 'ได้ (HTTP ' + r.status + ')' : 'ไม่ได้ (HTTP ' + r.status + ' เซิร์ฟเวอร์ติดต่อ Google ไม่ได้)').catch(e => 'ไม่ได้ (' + e.message + ')');
+  const [a, b] = await Promise.all([direct, server]);
+  out.length = 0; out.push('ผลตรวจ: Google โดยตรง = ' + a, 'ผลตรวจ: ผ่านเซิร์ฟเวอร์ = ' + b, 'เสียงไทยในเครื่อง = ' + (voices.length ? voices.length + ' เสียง' : 'ไม่มี')); show();
 }
 function speak(text, done) {
   const gen = ++speakGen; // ทุกครั้งที่พูดใหม่ ชุดเก่าจะหยุดต่อทันที ไม่ปนเสียงกัน
@@ -1243,7 +1259,7 @@ function hostLobby() {
   const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { VS.voice = vs.value; saveVS(); hostLobby(); };
   const vp = document.getElementById('vpitch'); if (vp) vp.oninput = () => { VS.pitch = +vp.value; saveVS(); };
   const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { VS.rate = +vr.value; saveVS(); };
-  const demo = list => { ac(); unlockAudio(); loadVoices(); cloudOk = true; ttsLog = ''; const st = document.getElementById('vstat'); if (st) { st.textContent = 'กำลังทดสอบ...'; setTimeout(() => { st.textContent = ttsLog || (voices.length ? 'ใช้เสียงในเครื่อง' : 'ยังไม่มีเสียง'); }, 4000); setTimeout(() => { st.textContent = ttsLog || st.textContent; }, 9000); } if (!canSpeak()) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
+  const demo = list => { ac(); unlockAudio(); loadVoices(); cloudOk = true; ttsLog = ''; const st = document.getElementById('vstat'); if (st && !voices.length) ttsDiag(st); if (!canSpeak()) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
   document.getElementById('vtest').onclick = () => demo(DEMO_WOLF);
   document.getElementById('vall').onclick = () => demo(DEMO_ALL);
 }
