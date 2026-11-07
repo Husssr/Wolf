@@ -1002,26 +1002,52 @@ function pickVoice() {
 }
 /* รอให้เสียงเอฟเฟกต์จบก่อน ค่อยเริ่มพูด (กันเสียงซ้อนกันจนฟังเพี้ยน) */
 const FX_WAIT = { howl: 1900, dawn: 1500, night: 1300, drum: 1900, dead: 1200, shot: 500, wake: 500, sleep: 500 };
-let speakGen = 0, keepU = [];
-function stopSpeech() { speakGen++; if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } }
+let speakGen = 0, keepU = [], cloudOk = true;
+const AU = new Audio(); AU.preservesPitch = true;
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function unlockAudio() { try { AU.src = SILENT; const pr = AU.play(); pr && pr.catch(() => {}); } catch (e) {} }
+const canSpeak = () => voices.length > 0 || cloudOk;
+function speakCloud(text, gen, fin) {
+  const parts = []; text.split(/\s+/).forEach(w => { if (!w) return; const l = parts[parts.length - 1]; if (l && l.length + w.length < 80) parts[parts.length - 1] = l + ' ' + w; else parts.push(w); });
+  let i = 0;
+  const next = () => {
+    if (gen !== speakGen) return; if (i >= parts.length) return fin();
+    const part = parts[i++]; let moved = false;
+    const go = () => { if (moved) return; moved = true; setTimeout(next, 60); };
+    AU.onended = go;
+    AU.onerror = () => { if (moved) return; moved = true; cloudOk = false; speakGen === gen && speakLocal(parts.slice(i - 1).join(' '), gen, fin); };
+    AU.src = '/tts?q=' + encodeURIComponent(part); AU.playbackRate = VS.rate; AU.preservesPitch = true;
+    const pr = AU.play(); if (pr && pr.catch) pr.catch(() => { if (!moved) AU.onerror(); });
+  };
+  next();
+}
+function stopSpeech() { speakGen++; try { AU.pause(); } catch (e) {} if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } }
 function speak(text, done) {
   const gen = ++speakGen; // ทุกครั้งที่พูดใหม่ ชุดเก่าจะหยุดต่อทันที ไม่ปนเสียงกัน
   let finished = false; const fin = () => { if (!finished) { finished = true; if (gen === speakGen) done && done(); } };
   const est = Math.min(20000, 1400 + text.length * 115);
-  if (!soundOn || !window.speechSynthesis || !voices.length) return setTimeout(fin, est * .8);
+  try { AU.pause(); } catch (e) {}
+  if (!soundOn) return setTimeout(fin, est * .8);
+  setTimeout(fin, est + 12000 + text.length * 60);
+  if (voices.length) return speakLocal(text, gen, fin);
+  if (cloudOk) return speakCloud(text, gen, fin);
+  setTimeout(fin, est * .8);
+}
+function speakLocal(text, gen, fin) {
+  if (!window.speechSynthesis || !voices.length) return setTimeout(fin, 1400 + text.length * 90);
   const parts = [];
   text.split(/\s+/).forEach(w => { if (!w) return; const l = parts[parts.length - 1]; if (l && l.length + w.length < 34) parts[parts.length - 1] = l + ' ' + w; else parts.push(w); });
   try {
     speechSynthesis.cancel(); const pv = pickVoice(); let i = 0;
     const next = () => {
-      if (finished || gen !== speakGen) return; if (i >= parts.length) return fin();
+      if (gen !== speakGen) return; if (i >= parts.length) return fin();
       const u = new SpeechSynthesisUtterance(parts[i++]); u.lang = 'th-TH'; u.rate = VS.rate; u.pitch = pv.pitch; u.volume = 1; if (pv.voice) u.voice = pv.voice;
       const go = () => { if (gen === speakGen) setTimeout(next, 90); };
-      u.onend = go; u.onerror = go; keepU.push(u); if (keepU.length > 6) keepU.shift(); // กันเบราว์เซอร์เก็บ utterance ทิ้งกลางคัน
+      u.onend = go; u.onerror = go; keepU.push(u); if (keepU.length > 6) keepU.shift();
       speechSynthesis.speak(u);
     };
-    setTimeout(next, 120); setTimeout(fin, est + parts.length * 400 + 8000);
-  } catch (e) { setTimeout(fin, est); }
+    setTimeout(next, 120);
+  } catch (e) { setTimeout(fin, 1400 + text.length * 90); }
 }
 /* เล่นเอฟเฟกต์ + พูดต่อกันเป็นลำดับ ใช้ทดสอบเสียงให้เหมือนตอนเล่นจริง */
 let demoGen = 0;
@@ -1180,7 +1206,7 @@ function hostLobby() {
       <label class="muted">ระดับเสียง ทุ้ม ↔ แหลม<input id="vpitch" type="range" min="-0.4" max="0.4" step="0.05" value="${VS.pitch}" style="width:100%"></label>
       <label class="muted">ความเร็วพูด ช้า ↔ เร็ว<input id="vrate" type="range" min="0.7" max="1.25" step="0.05" value="${VS.rate}" style="width:100%"></label>
       <div class="row"><button class="btn small" id="vtest">ทดสอบเสียงพูด</button><button class="btn small" id="vall">ฟังประโยคเรียกทุกบทบาท</button></div>
-      <span class="muted" style="font-size:.9rem">${voices.length ? 'พบเสียงภาษาไทยในเครื่องนี้ ' + voices.length + ' เสียง' + (pickVoice().native ? '' : ' เครื่องนี้ไม่มีเสียงตรงกับเพศที่เลือก ระบบปรับโทนเสียงให้แทน') : 'ยังไม่พบเสียงภาษาไทยในเครื่องนี้ จะแสดงข้อความตัวใหญ่แทนเสียง'}</span>
+      <span class="muted" style="font-size:.9rem">${voices.length ? 'พบเสียงภาษาไทยในเครื่องนี้ ' + voices.length + ' เสียง' + (pickVoice().native ? '' : ' เครื่องนี้ไม่มีเสียงตรงกับเพศที่เลือก ระบบปรับโทนเสียงให้แทน') : 'เครื่องนี้ไม่มีเสียงภาษาไทยในตัว จะใช้เสียงพูดจากเซิร์ฟเวอร์ (เสียงผู้หญิง ต้องมีอินเทอร์เน็ต) ปรับได้เฉพาะความเร็ว'}</span>
     </div>
     ${V.msg ? `<p class="err" style="margin:0">${esc(V.msg)}</p>` : ''}
     <button class="btn primary block" id="go" style="min-height:64px;font-size:1.2rem" ${n < V.min ? 'disabled' : ''}>${n < V.min ? 'ต้องมีผู้เล่นอย่างน้อย ' + V.min + ' คน' : 'เริ่มเกม'}</button>
@@ -1196,12 +1222,12 @@ function hostLobby() {
   $app.querySelectorAll('#vm button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { voteMode: b.dataset.v } }));
   $app.querySelectorAll('#ds button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { discussSec: +b.dataset.v } }));
   $app.querySelectorAll('#as button').forEach(b => b.onclick = () => send({ t: 'settings', settings: { actionSec: +b.dataset.v } }));
-  document.getElementById('go').onclick = () => { ac(); if (window.speechSynthesis) { try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) {} } send({ t: 'start' }); };
+  document.getElementById('go').onclick = () => { ac(); unlockAudio(); if (window.speechSynthesis) { try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) {} } send({ t: 'start' }); };
   $app.querySelectorAll('#vg button').forEach(b => b.onclick = () => { VS.gender = b.dataset.v; VS.voice = ''; saveVS(); hostLobby(); });
   const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { VS.voice = vs.value; saveVS(); hostLobby(); };
   const vp = document.getElementById('vpitch'); if (vp) vp.oninput = () => { VS.pitch = +vp.value; saveVS(); };
   const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { VS.rate = +vr.value; saveVS(); };
-  const demo = list => { ac(); loadVoices(); if (!voices.length) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
+  const demo = list => { ac(); unlockAudio(); loadVoices(); if (!canSpeak()) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
   document.getElementById('vtest').onclick = () => demo(DEMO_WOLF);
   document.getElementById('vall').onclick = () => demo(DEMO_ALL);
 }
