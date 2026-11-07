@@ -1007,21 +1007,36 @@ const AU = new Audio(); AU.preservesPitch = true;
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function unlockAudio() { try { AU.src = SILENT; const pr = AU.play(); pr && pr.catch(() => {}); } catch (e) {} }
 const canSpeak = () => voices.length > 0 || cloudOk;
+let ttsLog = '';
+const TTS_SRC = [
+  q => 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=th&q=' + encodeURIComponent(q), // ขอจากเบราว์เซอร์โดยตรง
+  q => '/tts?q=' + encodeURIComponent(q),                                                                    // สำรอง: ผ่านเซิร์ฟเวอร์
+];
+const TTS_NAME = ['Google โดยตรง', 'ผ่านเซิร์ฟเวอร์'];
 function speakCloud(text, gen, fin) {
   const parts = []; text.split(/\s+/).forEach(w => { if (!w) return; const l = parts[parts.length - 1]; if (l && l.length + w.length < 80) parts[parts.length - 1] = l + ' ' + w; else parts.push(w); });
   let i = 0;
   const next = () => {
     if (gen !== speakGen) return; if (i >= parts.length) return fin();
-    const part = parts[i++]; let moved = false;
+    const part = parts[i++]; let si = 0, moved = false;
     const go = () => { if (moved) return; moved = true; setTimeout(next, 60); };
-    AU.onended = go;
-    AU.onerror = () => { if (moved) return; moved = true; cloudOk = false; speakGen === gen && speakLocal(parts.slice(i - 1).join(' '), gen, fin); };
-    AU.src = '/tts?q=' + encodeURIComponent(part); AU.playbackRate = VS.rate; AU.preservesPitch = true;
-    const pr = AU.play(); if (pr && pr.catch) pr.catch(() => { if (!moved) AU.onerror(); });
+    const tryNext = why => {
+      if (moved || gen !== speakGen) return;
+      ttsLog = (ttsLog ? ttsLog + ' / ' : '') + TTS_NAME[si] + ' ล้มเหลว' + (why ? ' (' + why + ')' : '');
+      si++;
+      if (si < TTS_SRC.length) return load();
+      moved = true; cloudOk = false; if (gen === speakGen) speakLocal(parts.slice(i - 1).join(' '), gen, fin);
+    };
+    const load = () => {
+      AU.onended = () => { ttsLog = 'เล่นเสียงสำเร็จ (' + TTS_NAME[si] + ')'; go(); };
+      AU.onerror = () => tryNext('โหลดไม่ได้');
+      AU.src = TTS_SRC[si](part); AU.playbackRate = VS.rate; AU.preservesPitch = true;
+      const pr = AU.play(); if (pr && pr.catch) pr.catch(e => tryNext(e && e.name));
+    };
+    load();
   };
   next();
 }
-function stopSpeech() { speakGen++; try { AU.pause(); } catch (e) {} if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) {} } }
 function speak(text, done) {
   const gen = ++speakGen; // ทุกครั้งที่พูดใหม่ ชุดเก่าจะหยุดต่อทันที ไม่ปนเสียงกัน
   let finished = false; const fin = () => { if (!finished) { finished = true; if (gen === speakGen) done && done(); } };
@@ -1206,6 +1221,7 @@ function hostLobby() {
       <label class="muted">ระดับเสียง ทุ้ม ↔ แหลม<input id="vpitch" type="range" min="-0.4" max="0.4" step="0.05" value="${VS.pitch}" style="width:100%"></label>
       <label class="muted">ความเร็วพูด ช้า ↔ เร็ว<input id="vrate" type="range" min="0.7" max="1.25" step="0.05" value="${VS.rate}" style="width:100%"></label>
       <div class="row"><button class="btn small" id="vtest">ทดสอบเสียงพูด</button><button class="btn small" id="vall">ฟังประโยคเรียกทุกบทบาท</button></div>
+      <span class="muted" id="vstat" style="font-size:.9rem"></span>
       <span class="muted" style="font-size:.9rem">${voices.length ? 'พบเสียงภาษาไทยในเครื่องนี้ ' + voices.length + ' เสียง' + (pickVoice().native ? '' : ' เครื่องนี้ไม่มีเสียงตรงกับเพศที่เลือก ระบบปรับโทนเสียงให้แทน') : 'เครื่องนี้ไม่มีเสียงภาษาไทยในตัว จะใช้เสียงพูดจากเซิร์ฟเวอร์ (เสียงผู้หญิง ต้องมีอินเทอร์เน็ต) ปรับได้เฉพาะความเร็ว'}</span>
     </div>
     ${V.msg ? `<p class="err" style="margin:0">${esc(V.msg)}</p>` : ''}
@@ -1227,7 +1243,7 @@ function hostLobby() {
   const vs = document.getElementById('vsel'); if (vs) vs.onchange = () => { VS.voice = vs.value; saveVS(); hostLobby(); };
   const vp = document.getElementById('vpitch'); if (vp) vp.oninput = () => { VS.pitch = +vp.value; saveVS(); };
   const vr = document.getElementById('vrate'); if (vr) vr.oninput = () => { VS.rate = +vr.value; saveVS(); };
-  const demo = list => { ac(); unlockAudio(); loadVoices(); if (!canSpeak()) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
+  const demo = list => { ac(); unlockAudio(); loadVoices(); cloudOk = true; ttsLog = ''; const st = document.getElementById('vstat'); if (st) { st.textContent = 'กำลังทดสอบ...'; setTimeout(() => { st.textContent = ttsLog || (voices.length ? 'ใช้เสียงในเครื่อง' : 'ยังไม่มีเสียง'); }, 4000); setTimeout(() => { st.textContent = ttsLog || st.textContent; }, 9000); } if (!canSpeak()) return alert('ไม่พบเสียงภาษาไทยในเครื่องนี้ ลองเปิดด้วย Safari บน iPad หรือ Chrome บน Android และตรวจว่าติดตั้งเสียงภาษาไทยในการตั้งค่าแล้ว'); playDemo(list); };
   document.getElementById('vtest').onclick = () => demo(DEMO_WOLF);
   document.getElementById('vall').onclick = () => demo(DEMO_ALL);
 }
